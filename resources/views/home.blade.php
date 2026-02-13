@@ -11,7 +11,7 @@
         <img src="{{ asset('imagens/logodomeblueazul.png') }}"
              class="mx-auto h-24 mb-4">
 
-        <h1 class="text-5xl font-black text-red-700">
+        <h1 class="text-5xl font-black text-blue-700">
             DomeBlue
         </h1>
 
