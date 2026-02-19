@@ -16,7 +16,7 @@
         </h1>
 
         <p class="text-gray-500 mt-3">
-            Sistema de Gestão
+            Sistema de Gestão DashBoard
         </p>
 
     </div>

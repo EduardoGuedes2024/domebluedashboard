@@ -2,7 +2,7 @@
 
     <div class="flex flex-col items-center mb-6">
         <img src="{{ asset('imagens/favicondomeblueazul.png') }}" class="h-14 mb-2" alt="Logo">
-        <h1 class="text-2xl font-black text-slate-800">DomeBlue</h1>
+        <h1 class="text-2xl font-black text-slate-800">DomeBlue DashBoard</h1>
         <p class="text-sm text-slate-500">Acesse sua conta</p>
     </div>
 
