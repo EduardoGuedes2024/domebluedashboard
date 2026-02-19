@@ -47,118 +47,121 @@
                 $podeEstoqueLojas = $isAdmin || (int) ($user->relatorios_lojas ?? 0) === 1;
                 $podeMovimentacao = $isAdmin || (int) ($user->movimento_estoque ?? 0) === 1;
 
+                ///--- CLIENTES ---- \\\
+                $podeClienteA = $isAdmin || (int) ($user->clientes_ativos ?? 0) === 1;
                 
 
                 $base = 'flex items-center p-3 rounded-lg transition';
 
             @endphp
 
-                {{-- HOME --}}
-                <li>
-                    <a href="{{ route('home') }}"
-                    class="{{ $base }} hover:bg-blue-700 text-gray-300">
-                        <i class="fas fa-home mr-3"></i> Home
-                    </a>
-                </li>
+            {{-- HOME --}}
+            <li>
+                <a href="{{ route('home') }}"
+                class="{{ $base }} hover:bg-blue-700 text-gray-300">
+                    <i class="fas fa-home mr-3"></i> Home
+                </a>
+            </li>
 
-                {{---dash vendas---}}
-                <li>
-                    <a href="{{ $podeVendasDash ? route('dashboard') : '#' }}"
-                    class="{{ $base }} {{ $podeVendasDash ? 'hover:bg-blue-700 text-gray-300' : 'opacity-50 cursor-not-allowed text-gray-400' }}"
-                    @unless($podeVendasDash)
-                        onclick="return semPermissao(event)"
-                    @endunless
-                    >
-                        <i class="fas fa-chart-line mr-3"></i> DashBoard de Vendas
-                    </a>
-                </li>
+            {{---dash vendas---}}
+            <li>
+                <a href="{{ $podeVendasDash ? route('dashboard') : '#' }}"
+                class="{{ $base }} {{ $podeVendasDash ? 'hover:bg-blue-700 text-gray-300' : 'opacity-50 cursor-not-allowed text-gray-400' }}"
+                @unless($podeVendasDash)
+                    onclick="return semPermissao(event)"
+                @endunless
+                >
+                    <i class="fas fa-chart-line mr-3"></i> DashBoard de Vendas
+                </a>
+            </li>
 
-                {{---Dash Ecommerce UF--}}
-                <li>
-                    <a href="{{ $podeEcomm_Uf ? route('ecommerce_Uf') : '#' }}"
-                    class="{{ $base }} {{ $podeEcomm_Uf ? 'hover:bg-blue-700 text-gray-300' : 'opacity-50 cursor-not-allowed text-gray-400' }}"
-                    @unless($podeEcomm_Uf)
-                        onclick="return semPermissao(event)"
-                    @endunless
+            {{---Dash Ecommerce UF--}}
+            <li>
+                <a href="{{ $podeEcomm_Uf ? route('ecommerce_Uf') : '#' }}"
+                class="{{ $base }} {{ $podeEcomm_Uf ? 'hover:bg-blue-700 text-gray-300' : 'opacity-50 cursor-not-allowed text-gray-400' }}"
+                @unless($podeEcomm_Uf)
+                    onclick="return semPermissao(event)"
+                @endunless
+                >
+                    <i class="fas fa-chart-line mr-3"></i> DashBoard Ecommerce UF
+                </a>
+            </li>
+            
+            {{-- GRUPO VENDAS --}}
+            <li class="mt-2">
+
+                <button type="button" onclick="toggleMenu('sub-vendas')" 
+                    class="w-full flex justify-between items-center text-xs font-bold text-white uppercase px-3 mt-4 mb-2 hover:text-blue-500 transition focus:outline-none">
+                    <span>VENDAS POR LOJA</span>
+                    <i class="fas fa-chevron-down text-[13px] ml-2"></i>
+                </button>
+
+                <div id="sub-vendas" class="hidden flex flex-col transition-all duration-300">
+                    
+                    {{--- Vendas JK--}}
+                    <a href="{{ $podeVenda_JK ? route('vendas_JK') : '#'}}"
+                        class="{{ $base }} {{ $podeVenda_JK ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
+                        @unless ($podeVenda_JK)
+                            onclick="return semPermissao(event)"
+                        @endunless
                     >
-                        <i class="fas fa-chart-line mr-3"></i> DashBoard Ecommerce UF
+                        <i class="fas fa-cash-register mr-3"></i>Vendas JK 
                     </a>
-                </li>
+
+                    
+                    {{--- Vendas Alpha---}}
+                    <a href="{{ $podeVendas_Aplha ? route('vendas_Alphaville') : '#'}}"
+                        class="{{ $base }} {{ $podeVendas_Aplha ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
+                        @unless ($podeVendas_Aplha)
+                            onclick="return semPermissao(event)"
+                        @endunless
+                    >
+                        <i class="fas fa-cash-register mr-3"></i>Vendas Alphaville 
+                    </a>
                 
-                {{-- GRUPO VENDAS --}}
-                <li class="mt-2">
-
-                    <button type="button" onclick="toggleMenu('sub-vendas')" 
-                        class="w-full flex justify-between items-center text-xs font-bold text-white uppercase px-3 mt-4 mb-2 hover:text-blue-500 transition focus:outline-none">
-                        <span>VENDAS POR LOJA</span>
-                        <i class="fas fa-chevron-down text-[13px] ml-2"></i>
-                    </button>
-
-                    <div id="sub-vendas" class="hidden flex flex-col transition-all duration-300">
-                        {{--- Vendas JK--}}
-                        <a href="{{ $podeVenda_JK ? route('vendas_JK') : '#'}}"
-                            class="{{ $base }} {{ $podeVenda_JK ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
-                            @unless ($podeVenda_JK)
-                                onclick="return semPermissao(event)"
-                            @endunless
-                        >
-                            <i class="fas fa-cash-register mr-3"></i>Vendas JK 
-                        </a>
-
-                        
-                        {{--- Vendas Alpha---}}
-                        <a href="{{ $podeVendas_Aplha ? route('vendas_Alphaville') : '#'}}"
-                            class="{{ $base }} {{ $podeVendas_Aplha ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
-                            @unless ($podeVendas_Aplha)
-                                onclick="return semPermissao(event)"
-                            @endunless
-                        >
-                            <i class="fas fa-cash-register mr-3"></i>Vendas Alphaville 
-                        </a>
+                    {{--- Vendas Rio --}}
+                    <a href="{{ $podeVendas_Rio ? route('vendas_Rio') : '#'}}"
+                        class="{{ $base }} {{ $podeVendas_Rio ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
+                        @unless ($podeVendas_Rio)
+                            onclick="return semPermissao(event)"
+                        @endunless
+                    >
+                        <i class="fas fa-cash-register mr-3"></i>Vendas Rio
+                    </a>
                     
-                        {{--- Vendas Rio --}}
-                        <a href="{{ $podeVendas_Rio ? route('vendas_Rio') : '#'}}"
-                            class="{{ $base }} {{ $podeVendas_Rio ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
-                            @unless ($podeVendas_Rio)
-                                onclick="return semPermissao(event)"
-                            @endunless
-                        >
-                            <i class="fas fa-cash-register mr-3"></i>Vendas Rio
-                        </a>
-                        
-                        {{--- Vendas Atacado--}}
-                        <a href="{{ $podeVendas_Atacado ? route('vendas_Atacado') : '#'}}"
-                            class="{{ $base }} {{ $podeVendas_Atacado ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
-                            @unless ($podeVendas_Atacado)
-                                onclick="return semPermissao(event)"
-                            @endunless
-                        >
-                            <i class="fas fa-cash-register mr-3"></i>Vendas Atacado 
-                        </a>
-                    
-                        {{--- Vendas Ecommerce--}}
-                        <a href="{{ $podeVendas_Ecomm ? route('vendas_Ecommerce') : '#'}}"
-                            class="{{ $base }} {{ $podeVendas_Ecomm ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
-                            @unless ($podeVendas_Ecomm)
-                                onclick="return semPermissao(event)"
-                            @endunless
-                        >
-                            <i class="fas fa-cash-register mr-3"></i>Vendas Ecommerce 
-                        </a>
+                    {{--- Vendas Atacado--}}
+                    <a href="{{ $podeVendas_Atacado ? route('vendas_Atacado') : '#'}}"
+                        class="{{ $base }} {{ $podeVendas_Atacado ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
+                        @unless ($podeVendas_Atacado)
+                            onclick="return semPermissao(event)"
+                        @endunless
+                    >
+                        <i class="fas fa-cash-register mr-3"></i>Vendas Atacado 
+                    </a>
+                
+                    {{--- Vendas Ecommerce--}}
+                    <a href="{{ $podeVendas_Ecomm ? route('vendas_Ecommerce') : '#'}}"
+                        class="{{ $base }} {{ $podeVendas_Ecomm ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
+                        @unless ($podeVendas_Ecomm)
+                            onclick="return semPermissao(event)"
+                        @endunless
+                    >
+                        <i class="fas fa-cash-register mr-3"></i>Vendas Ecommerce 
+                    </a>
 
 
-                        {{--- Vendas Curitica--}}
-                        <a href="{{ $podeVendas_Curitiba ? route('vendas_Curitiba') : '#'}}"
-                            class="{{ $base }} {{ $podeVendas_Curitiba ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
-                            @unless ($podeVendas_Curitiba)
-                                onclick="return semPermissao(event)"
-                            @endunless
-                        >
-                            <i class="fas fa-cash-register mr-3"></i>Vendas Curitiba
-                        </a>
-                    
-                    </div>
-                </li>
+                    {{--- Vendas Curitica--}}
+                    <a href="{{ $podeVendas_Curitiba ? route('vendas_Curitiba') : '#'}}"
+                        class="{{ $base }} {{ $podeVendas_Curitiba ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
+                        @unless ($podeVendas_Curitiba)
+                            onclick="return semPermissao(event)"
+                        @endunless
+                    >
+                        <i class="fas fa-cash-register mr-3"></i>Vendas Curitiba
+                    </a>
+                
+                </div>
+            </li>
             
             
             {{-- GRUPO ESTOQUE --}}
@@ -204,6 +207,19 @@
 
 
                 </div>
+            </li>
+
+
+            {{-- CLIENTES ATIVOS --}}
+            <li>
+                <a href="{{ $podeClienteA ? route('clientes_Ativos') : '#' }}"
+                class="{{ $base }} {{ $podeClienteA ? 'hover:bg-blue-700 text-gray-300' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
+                @unless ($podeClienteA)
+                    onclick="return semPermissao(event)"
+                @endunless
+                >
+                    <i class="fa-solid fa-users mr-3"></i> Consulta Clientes
+                </a>
             </li>
 
         </ul>

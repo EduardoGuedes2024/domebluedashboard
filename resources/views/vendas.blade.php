@@ -63,6 +63,7 @@
                 </select>
             </div>
 
+            {{--filtro por lojas--}}
             <div class="w-full sm:w-48">
                 <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Loja</label>
                 <select name="loja" class="w-full border rounded-lg p-2 text-sm">

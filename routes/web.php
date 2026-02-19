@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClientesAtivosController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
@@ -15,8 +16,7 @@ use App\http\Controllers\RelatorioVendasAtacadoController;
 use App\http\Controllers\RelatorioVendasEcommerceController;
 use App\http\Controllers\RelatorioVendasCuritibaController;
 use App\Http\Controllers\EcommerceUfController;
-
-
+use Symfony\Component\Routing\Route as RoutingRoute;
 
 Route::get('/', function () {
     return view('welcome');
@@ -53,6 +53,11 @@ Route::get('/ecommerce_Uf/export/pdf', [EcommerceUfController::class, 'exportPdf
 Route::get('/vendas', [RelatorioVendasController::class, 'index'])
     ->middleware(['auth', 'perm:domeblue_vendas'])
     ->name('vendas');
+
+// PDF movimento vendas geral 
+Route::get('/relatorios/vendas/pdf', [RelatorioVendasController::class, 'exportPdf'])
+    ->middleware(['auth', 'perm:vendas'])
+    ->name('relatorios.vendas.export.pdf');    
 
 /// vendas JK    
 Route::get('/vendas_JK', [RelatorioVendasJKController::class, 'index'])
@@ -115,11 +120,10 @@ Route::get('/movimentacao_estoque', [MovimentacaoEstoqueController::class, 'inde
 Route::get('/movimentacao_estoque/export/pdf', [MovimentacaoEstoqueController::class, 'exportPdf'])
     ->name('movimentacao.pdf');
 
-
-// Rota para Exportar o PDF 
-Route::get('/relatorios/vendas/pdf', [RelatorioVendasController::class, 'exportPdf'])
-    ->middleware(['auth', 'perm:vendas'])
-    ->name('relatorios.vendas.export.pdf');
+///////// ------- CLIENTES -------- \\\\\\\\\\
+Route::get('/clientes_Ativos', [ClientesAtivosController::class, 'index'])
+    ->middleware(['auth', 'perm:clientes_ativos'])
+    ->name('clientes_Ativos');
 
 
 Route::middleware('auth')->group(function () {
