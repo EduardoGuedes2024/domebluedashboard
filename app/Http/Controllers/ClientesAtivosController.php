@@ -8,6 +8,33 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class ClientesAtivosController extends Controller
 {
+
+    public function getMunicipios($uf) 
+    {
+        // Buscamos a descrição e o código
+        $municipiosRaw = DB::table('dbo.cadcli')
+            ->select('des_cidade', 'cod_municipio')
+            ->where('uf_cliente', $uf)
+            ->whereNotNull('cod_municipio')
+            ->where('des_cidade', '<>', '') // Remove cidades sem nome
+            ->distinct()
+            ->orderBy('des_cidade', 'asc') // Ordenar pelo nome fica mais fácil para o usuário
+            ->get();
+
+        // Limpamos os espaços em branco que o SQL Server deixa no final (Trimming)
+        $municipios = $municipiosRaw->map(function($item) {
+
+            $nomeConvertido = mb_convert_encoding(trim($item->des_cidade), 'UTF-8', 'ISO-8859-1');
+            return [
+                'codigo' => trim($item->cod_municipio),
+                'nome' => $nomeConvertido
+            ];
+        });
+
+        return response()->json($municipios);
+    }
+
+
     public function index(Request $request)
     {
         // 1. CONFIGURAÇÃO DE PAGINAÇÃO (Padrão SQL Server que funciona no seu note)
@@ -20,6 +47,17 @@ class ClientesAtivosController extends Controller
         $busca = $request->get('busca_cliente');
         $dataInicio = $request->get('data_inicio', now()->subMonths(2)->format('Y-m-d')); // Padrão 2 meses
         $dataFim = $request->get('data_fim', now()->format('Y-m-d'));
+        $municipio = $request->get('busca_municipio');
+
+        // 1. Pega todos os Estados únicos para o primeiro select
+        $estados = DB::table('dbo.cadcli')
+            ->select('uf_cliente')
+            ->whereNotNull('uf_cliente')
+            ->where('tipo_cliente', 'J')
+            ->distinct()
+            ->orderBy('uf_cliente', 'asc')
+            ->pluck('uf_cliente');
+
 
         // 3. BUSCA DE IDs COM RANKING )
         $sqlRanking = "
@@ -30,6 +68,9 @@ class ClientesAtivosController extends Controller
                 FROM dbo.cadcli c
                 WHERE c.tipo_cliente = 'J'
                 " . ($busca ? " AND (c.cod_cliente LIKE '%{$busca}%' OR c.raz_cliente LIKE '%{$busca}%')" : "") . "
+                " . ($request->get('busca_uf') ? " AND c.uf_cliente = '{$request->get('busca_uf')}'" : "") . "
+                " . ($request->get('busca_municipio') ? " AND c.cod_municipio = '{$request->get('busca_municipio')}'" : "") . "
+                
             ) x WHERE x.rn BETWEEN ? AND ?
         ";
 
@@ -87,6 +128,6 @@ class ClientesAtivosController extends Controller
             ['path' => url()->current(), 'query' => $request->query()]
         );
 
-        return view('clientes_Ativos', compact('clientes', 'dataInicio', 'dataFim'));
+        return view('clientes_Ativos', compact('clientes', 'dataInicio', 'dataFim', 'estados'));
     }
 }

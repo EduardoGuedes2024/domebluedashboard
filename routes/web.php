@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ClientesAtivosController;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
@@ -16,6 +16,7 @@ use App\http\Controllers\RelatorioVendasAtacadoController;
 use App\http\Controllers\RelatorioVendasEcommerceController;
 use App\http\Controllers\RelatorioVendasCuritibaController;
 use App\Http\Controllers\EcommerceUfController;
+use App\Http\Controllers\ClientesAtivosController;
 use Symfony\Component\Routing\Route as RoutingRoute;
 
 Route::get('/', function () {
@@ -124,6 +125,9 @@ Route::get('/movimentacao_estoque/export/pdf', [MovimentacaoEstoqueController::c
 Route::get('/clientes_Ativos', [ClientesAtivosController::class, 'index'])
     ->middleware(['auth', 'perm:clientes_ativos'])
     ->name('clientes_Ativos');
+
+// Adicione no final do arquivo routes/web.php
+Route::get('/api/municipios/{uf}', [ClientesAtivosController::class, 'getMunicipios']);
 
 
 Route::middleware('auth')->group(function () {

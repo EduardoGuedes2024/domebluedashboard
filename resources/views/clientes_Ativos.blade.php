@@ -24,27 +24,54 @@
         </div>
 
         <form method="GET" action="{{ route('clientes_Ativos') }}" class="flex flex-wrap gap-2 items-end">
+
+            {{-- filtro clinte--}}
             <div class="w-full sm:w-64">
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Pesquisar Cliente</label>
                 <input type="text" name="busca_cliente" value="{{ request('busca_cliente') }}" 
                        placeholder="Cód ou Razão..." class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
             </div>
 
+            {{-- filtro estado--}}
+            <div class="w-full sm:w-32">
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Estado (UF)</label>
+                <select name="busca_uf" id="select-uf" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    <option value="">UF</option>
+                    @foreach($estados as $uf)
+                        <option value="{{ $uf }}" {{ request('busca_uf') == $uf ? 'selected' : '' }}>{{ $uf }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- filtro muncipio--}}
+            <div class="w-full sm:w-64">
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Município</label>
+                <select name="busca_municipio" id="select-municipio" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                    <option value="">Selecione a UF</option>
+                    {{-- Será preenchido pelo JavaScript --}}
+                </select>
+            </div>
+
+            {{-- filtro peeriodo inicio--}}
             <div class="w-full sm:w-40">
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Início Período</label>
                 <input type="date" name="data_inicio" value="{{ $dataInicio }}" class="w-full border rounded-lg p-2 text-sm">
             </div>
 
+            {{-- filtro peeriodo fim--}}
             <div class="w-full sm:w-40">
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Fim Período</label>
                 <input type="date" name="data_fim" value="{{ $dataFim }}" class="w-full border rounded-lg p-2 text-sm">
             </div>
 
+            {{-- botao filtrar--}}
             <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-slate-900 transition flex items-center gap-2">
                 <i class="fa-solid fa-magnifying-glass"></i> Filtrar
             </button>
             
+            {{-- botao botao limpar--}}
             <a href="{{ route('clientes_Ativos') }}" class="bg-slate-200 text-slate-800 px-4 py-2 rounded-lg font-bold hover:bg-slate-300 transition">Limpar</a>
+
         </form>
     </div>
 </header>
@@ -166,5 +193,34 @@
             link.addEventListener('click', showLoader);
         });
     });
+
+    document.getElementById('select-uf').addEventListener('change', function() {
+    const uf = this.value;
+    const selectMun = document.getElementById('select-municipio');
+    
+    selectMun.innerHTML = '<option value="">Carregando...</option>';
+    
+    if (!uf) {
+        selectMun.innerHTML = '<option value="">Selecione a UF</option>';
+        return;
+    }
+
+    
+    fetch(`{{ url('/api/municipios') }}/${uf}`)
+    .then(response => response.json())
+    .then(data => {
+        selectMun.innerHTML = '<option value="">Todos os Municípios</option>';
+        data.forEach(mun => {
+            // mun.codigo é o que vai pro banco, mun.nome é o que o usuário vê
+            if(mun.nome !== "") { 
+                selectMun.innerHTML += `<option value="${mun.codigo}">${mun.nome}</option>`;
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        selectMun.innerHTML = '<option value="">Erro ao carregar</option>';
+    });
+});
 </script>
 @endpush
