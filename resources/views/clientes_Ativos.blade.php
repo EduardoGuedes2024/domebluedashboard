@@ -36,7 +36,7 @@
             <div class="w-full sm:w-32">
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Estado (UF)</label>
                 <select name="busca_uf" id="select-uf" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                    <option value="">UF</option>
+                    <option value="">TodasUF</option>
                     @foreach($estados as $uf)
                         <option value="{{ $uf }}" {{ request('busca_uf') == $uf ? 'selected' : '' }}>{{ $uf }}</option>
                     @endforeach
@@ -96,10 +96,11 @@
         @foreach($clientes as $cliente)
             @php
                 $isAtivo = !empty($cliente->compra_periodo);
+                $nuncaComprou = empty($cliente->ultima_compra_geral); // Identifica quem nunca comprou
                 $isSy = str_starts_with(strtolower((string)$cliente->marca_refid), 'sy'); // Lógica Syssa/Amissima
             @endphp
 
-            <section class="bg-blue-50 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <section class="bg-blue-50 rounded-xl shadow-sm border {{ $nuncaComprou ? 'border-orange-300' : 'border-gray-200' }} overflow-hidden">
 
                 {{-- Cabeçalho do Card --}}
                 <div class="px-6 py-3 border-b border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between bg-white/60">
@@ -118,13 +119,18 @@
                     
                     <div class="flex gap-2">
 
-                        <span class="text-[10px] font-black px-3 py-1 rounded-full {{ $isAtivo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }} border border-current uppercase">
-                            {{ $isAtivo ? 'ATIVO NO PERÍODO' : 'INATIVO NO PERÍODO' }}
-                        </span>
-
-                        <span class="text-[10px] font-black px-3 py-1 rounded-full bg-blue-900 text-white uppercase">
-                            MARCA: {{ $isSy ? 'SYSSA' : 'AMISSIMA' }}
-                        </span>
+                        @if($nuncaComprou)
+                            <span class="text-[10px] font-black px-3 py-1 rounded-full bg-orange-100 text-orange-700 border border-orange-300 uppercase">
+                                SÓ CADASTRO (SEM COMPRA)
+                            </span>
+                        @else
+                            <span class="text-[10px] font-black px-3 py-1 rounded-full {{ $isAtivo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }} border border-current uppercase">
+                                {{ $isAtivo ? 'ATIVO NO PERÍODO' : 'INATIVO NO PERÍODO' }}
+                            </span>
+                            <span class="text-[10px] font-black px-3 py-1 rounded-full bg-blue-900 text-white uppercase">
+                                MARCA: {{ $isSy ? 'SYSSA' : 'AMISSIMA' }}
+                            </span>
+                        @endif
 
                     </div>
 
@@ -164,7 +170,7 @@
                         <p class="text-[10px] font-bold text-gray-400 uppercase">Última Compra Geral</p>
                         
                         <p class="font-black text-slate-800">
-                            {{ $cliente->ultima_compra_geral ? date('d/m/Y', strtotime($cliente->ultima_compra_geral)) : 'SEM REGISTRO' }}
+                            {{ $cliente->ultima_compra_geral ? date('d/m/Y', strtotime($cliente->ultima_compra_geral)) : 'NUNCA COMPROU' }}
                         </p>
 
                     </div>
