@@ -11,45 +11,45 @@ class ClientesAtivosController extends Controller
 
     public function getMunicipios($uf) 
     {
-        // Buscamos a descrição e o código
+        // Agrupamos pelo código do município para garantir que ele seja único
         $municipiosRaw = DB::table('dbo.cadcli')
-            ->select('des_cidade', 'cod_municipio')
-            ->where('uf_cliente', $uf)
+            ->select('cod_municipio', DB::raw("MAX(des_cidade) as des_cidade"))
+            ->where('uf_cliente', trim($uf))
             ->whereNotNull('cod_municipio')
-            ->where('des_cidade', '<>', '') // Remove cidades sem nome
-            ->distinct()
-            ->orderBy('des_cidade', 'asc') // Ordenar pelo nome fica mais fácil para o usuário
+            ->where('cod_municipio', '<>', '')
+            ->groupBy('cod_municipio') // A mágica acontece aqui: um registro por código
             ->get();
 
-        // Limpamos os espaços em branco que o SQL Server deixa no final (Trimming)
         $municipios = $municipiosRaw->map(function($item) {
+            // Limpamos e convertemos o nome que veio do MAX()
+            $nomeLimpo = trim($item->des_cidade);
+            $nomeConvertido = mb_convert_encoding($nomeLimpo, 'UTF-8', 'ISO-8859-1');
 
-            $nomeConvertido = mb_convert_encoding(trim($item->des_cidade), 'UTF-8', 'ISO-8859-1');
             return [
                 'codigo' => trim($item->cod_municipio),
-                'nome' => $nomeConvertido
+                'nome' => mb_strtoupper($nomeConvertido) // Padroniza tudo em maiúsculo
             ];
-        });
+        })->sortBy('nome'); // Ordena alfabeticamente pelo nome para facilitar a busca
 
-        return response()->json($municipios);
+        return response()->json($municipios->values());
     }
 
 
     public function index(Request $request)
     {
-        // 1. CONFIGURAÇÃO DE PAGINAÇÃO (Padrão SQL Server que funciona no seu note)
+        
         $perPage = 10;
         $page = max(1, (int) $request->get('page', 1));
         $start = (($page - 1) * $perPage) + 1;
         $end = $page * $perPage;
 
-        // 2. FILTROS DINÂMICOS
+        // FILTROS DINÂMICOS
         $busca = $request->get('busca_cliente');
         $dataInicio = $request->get('data_inicio', now()->subMonths(2)->format('Y-m-d')); // Padrão 2 meses
         $dataFim = $request->get('data_fim', now()->format('Y-m-d'));
         $municipio = $request->get('busca_municipio');
 
-        // 1. Pega todos os Estados únicos para o primeiro select
+        //Pega todos os Estados únicos para o primeiro select
         $estados = DB::table('dbo.cadcli')
             ->select('uf_cliente')
             ->whereNotNull('uf_cliente')
@@ -59,16 +59,28 @@ class ClientesAtivosController extends Controller
             ->pluck('uf_cliente');
 
 
-        // 3. BUSCA DE IDs COM RANKING )
+        // BUSCA DE IDs COM PRIORIDADE PARA ATIVOS NO PERÍODO
         $sqlRanking = "
             SELECT cod_cliente FROM (
                 SELECT 
                     c.cod_cliente, 
-                    ROW_NUMBER() OVER (ORDER BY c.cod_cliente DESC) as rn
+                    ROW_NUMBER() OVER (
+                        ORDER BY 
+                            -- PESO 1: Quem comprou no período (Independente de UF ou Filtro)
+                            (SELECT COUNT(*) FROM dbo.pedidov p 
+                            WHERE p.cod_cliente = c.cod_cliente 
+                            AND p.data_emissao BETWEEN '{$dataInicio}' AND '{$dataFim}') DESC,
+                            
+                            -- PESO 2: Última compra geral (Para os ativos ficarem por ordem de recência)
+                            (SELECT MAX(data_emissao) FROM dbo.pedidov p3 WHERE p3.cod_cliente = c.cod_cliente) DESC,
+                            
+                            -- PESO 3: Código do cliente
+                            c.cod_cliente DESC
+                    ) as rn
                 FROM dbo.cadcli c
                 WHERE c.tipo_cliente = 'J'
                 " . ($busca ? " AND (c.cod_cliente LIKE '%{$busca}%' OR c.raz_cliente LIKE '%{$busca}%')" : "") . "
-                " . ($request->get('busca_uf') ? " AND c.uf_cliente = '{$request->get('busca_uf')}'" : "") . "
+                " . ($request->get('busca_uf') ? " AND RTRIM(c.uf_cliente) = '{$request->get('busca_uf')}'" : "") . "
                 " . ($request->get('busca_municipio') ? " AND c.cod_municipio = '{$request->get('busca_municipio')}'" : "") . "
                 
             ) x WHERE x.rn BETWEEN ? AND ?
@@ -76,12 +88,12 @@ class ClientesAtivosController extends Controller
 
         $idsPaginados = collect(DB::select($sqlRanking, [$start, $end]))
             ->pluck('cod_cliente')
-            ->map(fn($id) => (int) trim($id)) // Limpeza essencial
+            ->map(fn($id) => (int) trim($id)) 
             ->toArray();
 
         $totalClientes = DB::table('cadcli')->where('tipo_cliente', 'J')->count();
 
-        // 4. BUSCA DETALHES (Endereço + Inteligência de Compra)
+        // BUSCA DETALHES Endereço + Compra
         $detalhes = collect();
         if (!empty($idsPaginados)) {
             $detalhes = DB::table('cadcli as c')

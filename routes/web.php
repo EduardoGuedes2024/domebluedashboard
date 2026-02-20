@@ -122,11 +122,13 @@ Route::get('/movimentacao_estoque/export/pdf', [MovimentacaoEstoqueController::c
     ->name('movimentacao.pdf');
 
 ///////// ------- CLIENTES -------- \\\\\\\\\\
+
+
 Route::get('/clientes_Ativos', [ClientesAtivosController::class, 'index'])
     ->middleware(['auth', 'perm:clientes_ativos'])
     ->name('clientes_Ativos');
 
-// Adicione no final do arquivo routes/web.php
+// API clientes Ativos 
 Route::get('/api/municipios/{uf}', [ClientesAtivosController::class, 'getMunicipios']);
 
 

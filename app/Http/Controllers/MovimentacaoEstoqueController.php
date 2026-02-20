@@ -18,13 +18,34 @@ class MovimentacaoEstoqueController extends Controller
         // Pegamos exatamente a mesma query do index
         $movimentos = DB::table('movimento_estoque')
             ->join('cadprod', 'movimento_estoque.cod_produto', '=', 'cadprod.cod_produto')
-            ->select('movimento_estoque.*', 
-            'cadprod.cod_produto_pai', 
-            'cadprod.des_produto',
-            'des1_produto'
+            ->select(
+                'movimento_estoque.*', 
+                'cadprod.cod_produto_pai', 
+                'cadprod.des_produto',
+                'cadprod.des1_produto' // Geralmente aqui fica a descrição da cor/tamanho
             )
             ->where('cadprod.cod_produto_pai', 'LIKE', $codigo . '%')
-            ->where('movimento_estoque.local', $localId)
+            ->where('movimento_estoque.local', (int)$localId)
+            
+            // 1. Agrupa por COR primeiro (ajuste o nome da coluna de cor se for outra)
+            ->orderBy('cadprod.des1_produto', 'ASC') 
+            
+            // 2. Ordenação Inteligente de Tamanho (Letras e Números)
+            ->orderByRaw("
+                CASE 
+                    WHEN cadprod.des_produto LIKE '% PP' THEN 1
+                    WHEN cadprod.des_produto LIKE '% P'  THEN 2
+                    WHEN cadprod.des_produto LIKE '% M'  THEN 3
+                    WHEN cadprod.des_produto LIKE '% G'  THEN 4
+                    WHEN cadprod.des_produto LIKE '% GG' THEN 5
+                    ELSE 99 
+                END ASC
+            ")
+            
+            // 3. Ordenação para tamanhos numéricos (36, 38, 40...)
+            ->orderBy('cadprod.des_produto', 'ASC') 
+            
+            // 4. Histórico cronológico dentro do mesmo produto
             ->orderBy('movimento_estoque.data_responsavel', 'ASC')
             ->orderBy('movimento_estoque.hora_responsavel', 'ASC')
             ->get();
@@ -82,11 +103,30 @@ class MovimentacaoEstoqueController extends Controller
                     'movimento_estoque.*', 
                     'cadprod.cod_produto_pai', 
                     'cadprod.des_produto',
-                    'des1_produto'
+                    'cadprod.des1_produto' // Geralmente aqui fica a descrição da cor/tamanho
                 )
                 ->where('cadprod.cod_produto_pai', 'LIKE', $codigo . '%')
-                // Filtro agora é direto pelo local selecionado
                 ->where('movimento_estoque.local', (int)$localSelecionado)
+                
+                // 1. Agrupa por COR primeiro (ajuste o nome da coluna de cor se for outra)
+                ->orderBy('cadprod.des1_produto', 'ASC') 
+                
+                // 2. Ordenação Inteligente de Tamanho (Letras e Números)
+                ->orderByRaw("
+                    CASE 
+                        WHEN cadprod.des_produto LIKE '% PP' THEN 1
+                        WHEN cadprod.des_produto LIKE '% P'  THEN 2
+                        WHEN cadprod.des_produto LIKE '% M'  THEN 3
+                        WHEN cadprod.des_produto LIKE '% G'  THEN 4
+                        WHEN cadprod.des_produto LIKE '% GG' THEN 5
+                        ELSE 99 
+                    END ASC
+                ")
+                
+                // 3. Ordenação para tamanhos numéricos (36, 38, 40...)
+                ->orderBy('cadprod.des_produto', 'ASC') 
+                
+                // 4. Histórico cronológico dentro do mesmo produto
                 ->orderBy('movimento_estoque.data_responsavel', 'ASC')
                 ->orderBy('movimento_estoque.hora_responsavel', 'ASC')
                 ->get();

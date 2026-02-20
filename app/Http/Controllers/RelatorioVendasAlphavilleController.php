@@ -26,7 +26,7 @@ class RelatorioVendasAlphavilleController extends Controller
 
         $filtroEmpresa = $empresa ? "AND empresa ='{$empresa}'" : "";
 
-        // 1. Total de produtos que venderam NESTA LOJA
+        // Total de produtos que venderam NESTA LOJA
         $sqlTotal = "
             SELECT COUNT(*) as total 
             FROM (
@@ -40,7 +40,34 @@ class RelatorioVendasAlphavilleController extends Controller
         ";
         $totalPais = (int) (DB::selectOne($sqlTotal)->total ?? 0);
 
-        // 2. Ranking de vendas exclusivo da loja alvo
+        //Cálculo do Faturamento Total (DASH_VENDAS)
+        $sqlFaturamento = "
+            SELECT
+                SUM(alphaville) as faturamento_total
+            FROM dash_vendas
+            WHERE data_movimento BETWEEN '{$inicio} 00:00:00' AND '{$fim} 23:59:59'
+        ";
+        $faturamento = DB::selectOne($sqlFaturamento);
+
+        //Soma do Total de Peças (VW_VENDAS_TODOS)
+        $sqlPeças = "
+            SELECT
+                SUM(quantidade) as total_pecas
+            FROM VW_VENDAS_TODOS
+            WHERE data_venda BETWEEN '{$inicio} 00:00:00' AND '{$fim} 23:59:59'
+            AND origem = '{$lojaAlvo}'
+            {$filtroEmpresa}
+        ";
+        $peças = DB::selectOne($sqlPeças);
+
+        // Montamos o objeto resumo para o Blade não dar erro
+        $resumo = (object)[
+            'faturamento_total' => $faturamento->faturamento_total ?? 0,
+            'total_pecas' => $peças->total_pecas ?? 0
+        ];
+
+
+        // Ranking de vendas exclusivo da loja alvo
         $sqlRanking = "
             SELECT produto_pai
             FROM (
@@ -104,6 +131,6 @@ class RelatorioVendasAlphavilleController extends Controller
             ];
         }
 
-        return view('vendas_Alphaville', compact('cards', 'pagination'));
+        return view('vendas_Alphaville', compact('cards', 'pagination', 'resumo'));
     }
 }

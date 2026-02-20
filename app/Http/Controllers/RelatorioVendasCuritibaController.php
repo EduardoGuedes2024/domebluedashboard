@@ -40,6 +40,35 @@ class RelatorioVendasCuritibaController extends Controller
         ";
         $totalPais = (int) (DB::selectOne($sqlTotal)->total ?? 0);
 
+
+        
+        //Cálculo do Faturamento Total (DASH_VENDAS)
+        $sqlFaturamento = "
+            SELECT 
+                SUM(curitiba) as faturamento_total
+            FROM dash_vendas 
+            WHERE data_movimento BETWEEN '{$inicio} 00:00:00' AND '{$fim} 23:59:59'
+        ";
+        $faturamento = DB::selectOne($sqlFaturamento);
+
+
+        //Soma do Total de Peças (VW_VENDAS_TODOS)
+        $sqlPecas = "
+            SELECT 
+                SUM(quantidade) as total_pecas
+            FROM VW_VENDAS_TODOS 
+            WHERE data_venda BETWEEN '{$inicio} 00:00:00' AND '{$fim} 23:59:59'
+            AND origem = '{$lojaAlvo}'
+            {$filtroEmpresa}
+        ";
+        $pecas = DB::selectOne($sqlPecas);
+
+        // Montamos o objeto resumo para o Blade não dar erro
+        $resumo = (object)[
+            'faturamento_total' => $faturamento->faturamento_total ?? 0,
+            'total_pecas' => $pecas->total_pecas ?? 0
+        ];
+
         // 2. Ranking de vendas exclusivo da loja alvo
         $sqlRanking = "
             SELECT produto_pai
@@ -104,6 +133,6 @@ class RelatorioVendasCuritibaController extends Controller
             ];
         }
 
-        return view('vendas_Curirtiba', compact('cards', 'pagination'));
+        return view('vendas_Curirtiba', compact('cards', 'pagination', 'resumo'));
     }
 }

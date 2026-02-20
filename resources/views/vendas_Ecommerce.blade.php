@@ -17,44 +17,64 @@
     </div>
 </div>
 
+{{--- TITULOS E FILTROS ---}}
 <header class="mb-6 bg-blue-50 p-6 rounded-xl shadow-sm border border-gray-200">
+
     <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Vendas - Ecommerce</h1>
             <p class="text-gray-500 text-sm">Ranking de produtos ordenados por volume de saída nesta loja</p>
         </div>
 
         <form method="GET" action="{{ route('vendas_Ecommerce') }}" id="formVendas" class="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:items-end gap-3">
+            
+            {{--- Filtro data Inicio---}}
             <div>
                 <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Início</label>
                 <input type="date" name="data_inicio" value="{{ request('data_inicio', now()->startOfMonth()->format('Y-m-d')) }}" 
                        class="border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
             </div>
+
+            {{--- Filtro data fim---}}
             <div>
                 <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Fim</label>
                 <input type="date" name="data_fim" value="{{ request('data_fim', now()->format('Y-m-d')) }}" 
                        class="border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
             </div>
+
+            {{--- Filtro Por marca ---}}
             <div class="w-full sm:w-48">
-                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Empresa</label>
+                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Marca</label>
                 <select name="empresa" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                    <option value="" @selected(request('empresa') == '')>Todas as Empresas</option>
+                    <option value="" @selected(request('empresa') == '')>Todas as Marcas</option>
                     <option value="Amissima" @selected(request('empresa') == 'Amissima')>Amissima</option>
                     <option value="Syssa" @selected(request('empresa') == 'Syssa')>Syssa</option>
                 </select>
             </div>
+
+            {{--- BOTÕES ---}}
             <div class="flex gap-2">
+
+                {{--- Botao Filtrar---}}
                 <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-slate-900 transition flex items-center gap-2">
                     <i class="fa-solid fa-magnifying-glass"></i> Filtrar
                 </button>
+
+                {{--- Botao limpar---}}
                 <a href="{{ route('vendas_Ecommerce') }}" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-bold hover:bg-slate-300 transition">
                     Limpar
                 </a>
+
             </div>
+
         </form>
+
     </div>
 </header>
 
+
+{{--- Card Informativo tela incial---}}
 @if(empty($cards))
     <div class="bg-white p-12 rounded-xl border border-blue-100 text-center shadow-sm">
         <i class="fa-solid fa-shop text-blue-200 text-6xl mb-4"></i>
@@ -62,6 +82,47 @@
         <p class="text-blue-600 font-bold mt-2">Selecione o período para ver o que o Ecommerce mais vendeu.</p>
     </div>
 @else
+
+{{-- Cards de Resumo de Vendas total valor e qntd --}}
+@if(!empty($cards))
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+    {{--- Card Valor TOTAL---}}
+    <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm flex items-center gap-4">
+
+        <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center text-xl">
+            <i class="fa-solid fa-dollar-sign"></i>
+        </div>
+
+        <div>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Valor Total Geral ($)  Amissima + Syssa no Período</p>
+            <p  class="text-[10px] font-black text-slate-400 uppercase tracking-widest">no Período filtrado</p>
+            <h3 class="text-2xl font-black text-slate-800">{{ $brl($resumo->faturamento_total ?? 0) }}</h3>
+        </div>
+
+    </div>
+
+    {{--- Card Qntd Total ---}}
+    <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm flex items-center gap-4">
+
+        <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center text-xl">
+            <i class="fa-solid fa-box-open"></i>
+        </div>
+
+        <div>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Peças</p>
+            <h3 class="text-2xl font-black text-slate-800">{{ number_format($resumo->total_pecas ?? 0, 0, ',', '.') }} 
+                <span class="text-sm font-bold text-slate-400">PEÇAS</span>
+            </h3>
+        </div>
+
+    </div>
+
+</div>
+
+@endif
+
     <div class="space-y-6">
         @foreach($cards as $card)
             <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">

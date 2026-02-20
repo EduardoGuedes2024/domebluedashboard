@@ -137,7 +137,7 @@ class RelatorioEstoqueLojasController extends Controller
                 $sqlTotal = "
                     SELECT COUNT(*) as total
                     FROM (
-                        SELECT cod_produto_pai, des1_produto,
+                        SELECT cod_produto_pai
                         FROM VW_SALDO_ESTOQUE
                         WHERE 1=1 {$filtro_grupos}
                         GROUP BY cod_produto_pai
@@ -150,13 +150,13 @@ class RelatorioEstoqueLojasController extends Controller
                     SELECT cod_produto_pai
                     FROM (
                         SELECT
-                            cod_produto_pai 
+                            cod_produto_pai,
                             ROW_NUMBER() OVER (ORDER BY cod_produto_pai DESC) as rn 
                         FROM (
                             SELECT cod_produto_pai
                             FROM VW_SALDO_ESTOQUE
                             WHERE 1=1 {$filtro_grupos}
-                            GROUP BY cod_produto_pai, des1_produto,
+                            GROUP BY cod_produto_pai
                             HAVING SUM(COALESCE(vquantidade,0)) > 0
                         ) p
                     ) x

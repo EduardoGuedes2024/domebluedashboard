@@ -26,7 +26,7 @@ class RelatorioVendasJKController extends Controller
 
         $filtroEmpresa = $empresa ? "AND empresa ='{$empresa}'" : "";
 
-        // 1. Total de produtos que venderam NESTA LOJA
+        //Total de produtos que venderam NESTA LOJA
         $sqlTotal = "
             SELECT COUNT(*) as total 
             FROM (
@@ -39,8 +39,9 @@ class RelatorioVendasJKController extends Controller
             ) t
         ";
         $totalPais = (int) (DB::selectOne($sqlTotal)->total ?? 0);
+        
 
-        // 1.1 Cálculo do Faturamento Total (DASH_VENDAS)
+        //Cálculo do Faturamento Total (DASH_VENDAS)
         $sqlFaturamento = "
             SELECT 
                 SUM(jk) as faturamento_total
@@ -49,7 +50,8 @@ class RelatorioVendasJKController extends Controller
         ";
         $faturamento = DB::selectOne($sqlFaturamento);
 
-        // 1.2 Soma do Total de Peças (VW_VENDAS_TODOS)
+
+        //Soma do Total de Peças (VW_VENDAS_TODOS)
         $sqlPecas = "
             SELECT 
                 SUM(quantidade) as total_pecas
@@ -66,7 +68,7 @@ class RelatorioVendasJKController extends Controller
             'total_pecas' => $pecas->total_pecas ?? 0
         ];
 
-        // 2. Ranking de vendas exclusivo da loja alvo
+        // Ranking de vendas exclusivo da loja alvo
         $sqlRanking = "
             SELECT produto_pai
             FROM (
@@ -90,6 +92,8 @@ class RelatorioVendasJKController extends Controller
             $pais, $totalPais, $perPage, $page,
             ['path' => url()->current(), 'query' => $request->query()]
         );
+
+
 
         $cards = [];
         foreach ($pais as $pai) {
