@@ -55,6 +55,31 @@
     </div>
 </header>
 
+{{-- Cards de Resumo de Vendas JK --}}
+@if(!empty($cards))
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm flex items-center gap-4">
+        <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center text-xl">
+            <i class="fa-solid fa-dollar-sign"></i>
+        </div>
+        <div>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Valor Total ($) Período</p>
+            <h3 class="text-2xl font-black text-slate-800">{{ $brl($resumo->faturamento_total ?? 0) }}</h3>
+        </div>
+    </div>
+
+    <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm flex items-center gap-4">
+        <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center text-xl">
+            <i class="fa-solid fa-box-open"></i>
+        </div>
+        <div>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Peças :::</p>
+            <h3 class="text-2xl font-black text-slate-800">{{ number_format($resumo->total_pecas ?? 0, 0, ',', '.') }} <span class="text-sm font-bold text-slate-400">UNIDADES</span></h3>
+        </div>
+    </div>
+</div>
+@endif
+
 @if(empty($cards))
     <div class="bg-white p-12 rounded-xl border border-blue-100 text-center shadow-sm">
         <i class="fa-solid fa-shop text-blue-200 text-6xl mb-4"></i>
