@@ -41,9 +41,26 @@ class RelatorioVendasAlphavilleController extends Controller
         $totalPais = (int) (DB::selectOne($sqlTotal)->total ?? 0);
 
         //Cálculo do Faturamento Total (DASH_VENDAS)
+
+        //Identificar qual coluna da DASH_VENDAS somar baseada no filtro de Marca
+        $empresaFiltro = $request->get('empresa'); // 'Amissima' ou 'Syssa'
+
+        if ($empresaFiltro === 'Amissima') {
+            $colunaFaturamento = "alphaville"; // Coluna amissima no banco
+        
+        }elseif ($empresaFiltro === 'Syssa') {
+            
+            $colunaFaturamento = "alphaville_syssa"; // Coluna syssa no banco
+
+        } else {
+            // Se for "Todas as Marcas" , somamos as duas 
+            $colunaFaturamento = "ISNULL(alphaville, 0) + ISNULL(alphaville_syssa, 0)";
+        }
+
+        //Cálculo do Faturamento Total (DASH_VENDAS) com base na marca filtrada 
         $sqlFaturamento = "
             SELECT
-                SUM(alphaville) as faturamento_total
+                SUM($colunaFaturamento) as faturamento_total
             FROM dash_vendas
             WHERE data_movimento BETWEEN '{$inicio} 00:00:00' AND '{$fim} 23:59:59'
         ";

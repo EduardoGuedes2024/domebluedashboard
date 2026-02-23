@@ -42,14 +42,29 @@ class RelatorioVendasJKController extends Controller
         
 
         //Cálculo do Faturamento Total (DASH_VENDAS)
+
+        //Identificar qual coluna da DASH_VENDAS somar baseada no filtro de Marca
+        $empresaFiltro = $request->get('empresa'); // 'Amissima' ou 'Syssa'
+
+        if ($empresaFiltro === 'Amissima') {
+            $colunaFaturamento = "jk"; // Coluna amissima no banco
+
+        } elseif ($empresaFiltro === 'Syssa') {
+            $colunaFaturamento = "jk_syssa"; // Coluna syssa no banco
+
+        } else {
+            // Se for "Todas as Marcas", somamos as duas
+            $colunaFaturamento = "ISNULL(jk, 0) + ISNULL(jk_syssa, 0)";
+        }
+
+        //Cálculo do Faturamento Total (DASH_VENDAS) com base na marca filtrada 
         $sqlFaturamento = "
             SELECT 
-                SUM(jk) as faturamento_total
+                SUM({$colunaFaturamento}) as faturamento_total
             FROM dash_vendas 
             WHERE data_movimento BETWEEN '{$inicio} 00:00:00' AND '{$fim} 23:59:59'
         ";
         $faturamento = DB::selectOne($sqlFaturamento);
-
 
         //Soma do Total de Peças (VW_VENDAS_TODOS)
         $sqlPecas = "

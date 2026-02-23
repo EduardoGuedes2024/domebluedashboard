@@ -49,52 +49,51 @@ class DashboardController extends Controller
                 return DB::table('dash_vendas')
                     ->select([
                         //ALPHAVILLE
-                        DB::raw('SUM(alphaville) as alphaville_amissima'),
-                        DB::raw('SUM(COALESCE(alphaville_syssa, 0)) as alphaville_syssa'),
-                        DB::raw('SUM(COALESCE(alphaville_peca, 0)) as alphaville_peca'),
-                        DB::raw('SUM(alphaville_pedidos) as alphaville_pedidos'),
-                        DB::raw('SUM(alphaville_clientes) as alphaville_clientes'),
+                        DB::raw('SUM(ISNULL(alphaville, 0)) as alphaville_amissima'),
+                        DB::raw('SUM(ISNULL(alphaville_syssa, 0)) as alphaville_syssa'),
+                        DB::raw('SUM(ISNULL(alphaville_peca, 0)) as alphaville_peca'),
+                        DB::raw('SUM(ISNULL(alphaville_pedidos, 0)) as alphaville_pedidos'),
+                        DB::raw('SUM(ISNULL(alphaville_clientes, 0)) as alphaville_clientes'),
 
                         // SYSSA
-                        DB::raw('SUM(syssa) as syssa_venda'),
-                        DB::raw('SUM(COALESCE(syssa_peca, 0)) as syssa_peca'),
-                        DB::raw('SUM(syssa_pedidos) as syssa_pedidos'),
-                        DB::raw('SUM(syssa_clientes) as syssa_clientes'),
+                        DB::raw('SUM(ISNULL(syssa, 0)) as syssa_venda'),
+                        DB::raw('SUM(ISNULL(syssa_peca, 0)) as syssa_peca'),
+                        DB::raw('SUM(ISNULL(syssa_pedidos, 0)) as syssa_pedidos'),
+                        DB::raw('SUM(ISNULL(syssa_clientes, 0)) as syssa_clientes'),
 
                         // JK
-                        DB::raw('SUM(jk) as jk_amissima'),
-                        DB::raw('SUM(COALESCE(jk_syssa, 0)) as jk_syssa'),
-                        DB::raw('SUM(COALESCE(jk_peca, 0)) as jk_peca'),
-                        DB::raw('SUM(jk_pedidos) as jk_pedidos'),
-                        DB::raw('SUM(jk_clientes) as jk_clientes'),
+                        DB::raw('SUM(ISNULL(jk, 0)) as jk_amissima'),
+                        DB::raw('SUM(ISNULL(jk_syssa, 0)) as jk_syssa'),
+                        DB::raw('SUM(ISNULL(jk_peca, 0)) as jk_peca'),
+                        DB::raw('SUM(ISNULL(jk_pedidos, 0)) as jk_pedidos'),
+                        DB::raw('SUM(ISNULL(jk_clientes, 0)) as jk_clientes'),
 
                         // RIO
-                        DB::raw('SUM(rio) as rio_amissima'),
-                        DB::raw('SUM(COALESCE(rio_syssa, 0)) as rio_syssa'),
-                        DB::raw('SUM(COALESCE(rio_peca, 0)) as rio_peca'),
-                        DB::raw('SUM(rio_pedidos) as rio_pedidos'),
-                        DB::raw('SUM(rio_clientes) as rio_clientes'),
+                        DB::raw('SUM(ISNULL(rio, 0)) as rio_amissima'),
+                        DB::raw('SUM(ISNULL(rio_syssa, 0)) as rio_syssa'),
+                        DB::raw('SUM(ISNULL(rio_peca, 0)) as rio_peca'),
+                        DB::raw('SUM(ISNULL(rio_pedidos, 0)) as rio_pedidos'),
+                        DB::raw('SUM(ISNULL(rio_clientes, 0)) as rio_clientes'),
 
                         // ATACADO
-                        DB::raw('SUM(atacado) as atacado_amissima'),
-                        DB::raw('SUM(COALESCE(atacado_syssa, 0)) as atacado_syssa'),
-                        DB::raw('SUM(COALESCE(atacado_peca, 0)) as atacado_peca'),
-                        DB::raw('SUM(atacado_pedidos) as atacado_pedidos'),
-                        DB::raw('SUM(atacado_clientes) as atacado_clientes'),
+                        DB::raw('SUM(ISNULL(atacado, 0)) as atacado_amissima'),
+                        DB::raw('SUM(ISNULL(atacado_syssa, 0)) as atacado_syssa'),
+                        DB::raw('SUM(ISNULL(atacado_peca, 0)) as atacado_peca'),
+                        DB::raw('SUM(ISNULL(atacado_pedidos, 0)) as atacado_pedidos'),
+                        DB::raw('SUM(ISNULL(atacado_clientes, 0)) as atacado_clientes'),
 
                         // ECOMMERCE
-                        DB::raw('SUM(ecommerce) as ecommerce_amissima'),
-                        DB::raw('SUM(COALESCE(ecommerce_syssa, 0)) as ecommerce_syssa'),
-                        DB::raw('SUM(COALESCE(ecommerce_peca, 0)) as ecommerce_peca'),
-                        DB::raw('SUM(ecommerce_pedidos) as ecommerce_pedidos'),
-                        DB::raw('SUM(ecommerce_clientes) as ecommerce_clientes'),
+                        DB::raw('SUM(ISNULL(ecommerce, 0)) as ecommerce_venda'),
+                        DB::raw('SUM(ISNULL(ecommerce_peca, 0)) as ecommerce_peca'),
+                        DB::raw('SUM(ISNULL(ecommerce_pedidos, 0)) as ecommerce_pedidos'),
+                        DB::raw('SUM(ISNULL(ecommerce_clientes, 0)) as ecommerce_clientes'),
 
                         // CURITIBA
-                        DB::raw('SUM(curitiba) as curitiba_amissima'),
-                        DB::raw('SUM(COALESCE(curitiba_syssa, 0)) as curitiba_syssa'),
-                        DB::raw('SUM(COALESCE(curitiba_peca, 0)) as curitiba_peca'),
-                        DB::raw('SUM(curitiba_pedidos) as curitiba_pedidos'),
-                        DB::raw('SUM(curitiba_clientes) as curitiba_clientes'),
+                        DB::raw('SUM(ISNULL(curitiba, 0)) as curitiba_amissima'),
+                        DB::raw('SUM(ISNULL(curitiba_syssa, 0)) as curitiba_syssa'),
+                        DB::raw('SUM(ISNULL(curitiba_peca, 0)) as curitiba_peca'),
+                        DB::raw('SUM(ISNULL(curitiba_pedidos, 0)) as curitiba_pedidos'),
+                        DB::raw('SUM(ISNULL(curitiba_clientes, 0)) as curitiba_clientes'),
                     ])
                     ->whereBetween('data_movimento', [$ini, $fim])
                     ->first();
@@ -129,20 +128,16 @@ class DashboardController extends Controller
                 ],
 
                 [
-                    'nome' => 'Syssa', 
+                    'nome' => 'Ecomm Syssa', 
                     'cor' => 'purple',
                     
                     // ATUAL
-                    'amissima_atual'  => 0, //para o Blade não quebrar
-                    'syssa_atual'     => $dadosAtual->syssa_venda ?? 0,  // para o Blade não quebrar
                     'total_atual'     => $dadosAtual->syssa_venda ?? 0, 
                     'pecas_atual'     => $dadosAtual->syssa_peca ?? 0,
                     'pedidos_atual'   => $dadosAtual->syssa_pedidos ?? 0,
                     'clientes_atual'  => $dadosAtual->syssa_clientes ?? 0,
 
                     // ANTERIOR
-                    'amissima_anterior'  => 0, 
-                    'syssa_anterior'     => $dadosAnterior->syssa_venda ?? 0,
                     'total_anterior'     => $dadosAnterior->syssa_venda ?? 0,
                     'pecas_anterior'     => $dadosAnterior->syssa_peca ?? 0,
                     'pedidos_anterior'   => $dadosAnterior->syssa_pedidos ?? 0,
@@ -214,20 +209,17 @@ class DashboardController extends Controller
                 ],
 
                 [
-                    'nome' => 'Ecommerce', 
+                    'nome' => 'Ecomm Atacado', 
                     'cor' => 'yellow',
 
-                    'amissima_atual' => $dadosAtual->ecommerce_amissima ?? 0, 
-                    'syssa_atual' => $dadosAtual->ecommerce_syssa ?? 0,
-                    'total_atual' => ($dadosAtual->ecommerce_amissima ?? 0) + ($dadosAtual->ecommerce_syssa ?? 0),
+                     
+                    'total_atual' => ($dadosAtual->ecommerce_venda ?? 0),
                     'pecas_atual' => $dadosAtual->ecommerce_peca ?? 0,
                     'pedidos_atual' => $dadosAtual->ecommerce_pedidos ?? 0, 
                     'clientes_atual' => $dadosAtual->ecommerce_clientes ?? 0,
                     
                     //ANTERIOR
-                    'amissima_anterior' => $dadosAnterior->ecommerce_amissima ?? 0, 
-                    'syssa_anterior' => $dadosAnterior->ecommerce_syssa ?? 0,
-                    'total_anterior' => ($dadosAnterior->ecommerce_amissima ?? 0) + ($dadosAnterior->ecommerce_syssa ?? 0),
+                    'total_anterior' => ($dadosAnterior->ecommerce_venda ?? 0),
                     'pecas_anterior' => $dadosAnterior->ecommerce_peca ?? 0,
                     'pedidos_anterior' =>$dadosAnterior->ecommerce_pedidos ?? 0,
                     'clientes_anterior' =>$dadosAnterior->ecommerce_clientes ?? 0,
@@ -259,13 +251,13 @@ class DashboardController extends Controller
             // DADOS DO GRÁFICO 
             // =========================
             $graficoVendasAtual = [
-                'Alphaville'   => (float) ($dadosAtual->alphaville_amissima ?? 0) + (float) ($dadosAtual->alphaville_syssa ?? 0),
-                'Syssa'        => (float) ($dadosAtual->syssa_venda ?? 0),
-                'JK Iguatemi'  => (float) ($dadosAtual->jk_amissima ?? 0) + (float) ($dadosAtual->jk_syssa ?? 0),
-                'Rio Janeiro'  => (float) ($dadosAtual->rio_amissima ?? 0) + (float) ($dadosAtual->rio_syssa ?? 0),
-                'Atacado'      => (float) ($dadosAtual->atacado_amissima ?? 0) + (float) ($dadosAtual->atacado_syssa ?? 0),
-                'Ecommerce'    => (float) ($dadosAtual->ecommerce_amissima ?? 0) + (float) ($dadosAtual->ecommerce_syssa ?? 0),
-                'Curitiba'     => (float) ($dadosAtual->curitiba_amissima ?? 0) + (float) ($dadosAtual->curitiba_syssa ?? 0),
+                'Alphaville'      => (float) ($dadosAtual->alphaville_amissima ?? 0) + (float) ($dadosAtual->alphaville_syssa ?? 0),
+                'Ecomm Syssa'     => (float) ($dadosAtual->syssa_venda ?? 0),
+                'JK Iguatemi'     => (float) ($dadosAtual->jk_amissima ?? 0) + (float) ($dadosAtual->jk_syssa ?? 0),
+                'Rio de Janeiro'     => (float) ($dadosAtual->rio_amissima ?? 0) + (float) ($dadosAtual->rio_syssa ?? 0),
+                'Atacado'         => (float) ($dadosAtual->atacado_amissima ?? 0) + (float) ($dadosAtual->atacado_syssa ?? 0),
+                'Ecomm Atacado'   => (float) ($dadosAtual->ecommerce_venda ?? 0),
+                'Curitiba'        => (float) ($dadosAtual->curitiba_amissima ?? 0) + (float) ($dadosAtual->curitiba_syssa ?? 0),
             ];
             
             $grafico=[];
@@ -279,11 +271,11 @@ class DashboardController extends Controller
             $conexaoStatus = "Erro SQL: " . $e->getMessage();
             $lojas = [
                 ['nome' => 'Alphaville', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'blue', 'pedidos_atual' => 0, 'clientes_atual' => 0, 'pedidos_anterior' => 0, 'clientes_anterior' => 0],
-                ['nome' => 'Syssa', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'purple', 'pedidos_atual' => 0, 'clientes_atual' => 0, 'pedidos_anterior' => 0, 'clientes_anterior' => 0],
+                ['nome' => 'Ecomm Syssa', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'purple', 'pedidos_atual' => 0, 'clientes_atual' => 0, 'pedidos_anterior' => 0, 'clientes_anterior' => 0],
                 ['nome' => 'JK Iguatemi', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'orange', 'pedidos_atual' => 0, 'clientes_atual' => 0, 'pedidos_anterior' => 0, 'clientes_anterior' => 0],
                 ['nome' => 'Rio de Janeiro', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'green', 'pedidos_atual' => 0, 'clientes_atual' => 0, 'pedidos_anterior' => 0, 'clientes_anterior' => 0],
                 ['nome' => 'Atacado', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'pink', 'pedidos_atual' => 0, 'clientes_atual'=> 0,'pedidos_anterior'=> 0,'clientes_anterior'=> 0],
-                ['nome' =>'Ecommerce',  	'total_atual'=>		0,'total_anterior'=>		0,'cor'=>'yellow','pedidos_atual'=>		0,'clientes_atual'=>		0,'pedidos_anterior'=>		0,'clientes_anterior'=>0],
+                ['nome' =>'Ecomm Atacado', 'total_atual'=> 0,'total_anterior'=> 0,'cor'=>'yellow','pedidos_atual'=> 0,'clientes_atual'=> 0,'pedidos_anterior'=> 0,'clientes_anterior'=>0],
                 ['nome' => 'Curitiba', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'red', 'pedidos_atual' => 0, 'clientes_atual' => 0, 'pedidos_anterior' => 0, 'clientes_anterior' => 0],
             ];
         }

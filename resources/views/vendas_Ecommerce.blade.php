@@ -91,22 +91,26 @@
     {{--- Card Valor TOTAL---}}
     <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm flex items-center gap-4">
 
-        <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center text-xl">
+        <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xl">
             <i class="fa-solid fa-dollar-sign"></i>
         </div>
-
+        
         <div>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Valor Total Geral ($)  Amissima + Syssa no Período</p>
-            <p  class="text-[10px] font-black text-slate-400 uppercase tracking-widest">no Período filtrado</p>
-            <h3 class="text-2xl font-black text-slate-800">{{ $brl($resumo->faturamento_total ?? 0) }}</h3>
-        </div>
 
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                Faturamento JK no período filtrado
+                @if(request('empresa')) - {{ request('empresa') }} @endif
+            </p>
+
+            <h3 class="text-2xl font-black text-slate-800">{{ $brl($resumo->faturamento_total) }}</h3>
+        
+        </div>
     </div>
 
     {{--- Card Qntd Total ---}}
     <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm flex items-center gap-4">
 
-        <div class="w-12 h-12 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center text-xl">
+        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl">
             <i class="fa-solid fa-box-open"></i>
         </div>
 

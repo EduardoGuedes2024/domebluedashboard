@@ -140,7 +140,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        /*
+        
         const graficoVendasAtual = @json($graficoVendasAtual);
 
         const labels = Object.keys(graficoVendasAtual);
@@ -187,7 +187,7 @@
                     }
                 }
             }
-        }); */
+        }); 
     </script>
 
 @endsection
