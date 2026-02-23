@@ -3,6 +3,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EstoqueController;
 use App\Http\Controllers\RelatorioEstoqueLojasController;
@@ -131,6 +132,12 @@ Route::get('/clientes_Ativos', [ClientesAtivosController::class, 'index'])
 // API clientes Ativos 
 Route::get('/api/municipios/{uf}', [ClientesAtivosController::class, 'getMunicipios']);
 
+
+//// CONFIGURAÇÕES USUÁRIOS
+Route::middleware(['auth', 'perm:configuracoes'])->group(function () {
+    Route::get('/configuracoes/usuarios', [UserController::class, 'index'])->name('users.index');
+    Route::post('/configuracoes/usuarios/{id}/update', [UserController::class, 'update'])->name('users.update');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

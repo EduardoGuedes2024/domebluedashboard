@@ -50,6 +50,7 @@
                 ///--- CLIENTES ---- \\\
                 $podeClienteA = $isAdmin || (int) ($user->clientes_ativos ?? 0) === 1;
                 
+                $podeConfig = $isAdmin || (int) ($user->configuracoes ?? 0) === 1;
 
                 $base = 'flex items-center p-3 rounded-lg transition';
 
@@ -219,6 +220,18 @@
                 @endunless
                 >
                     <i class="fa-solid fa-users mr-3"></i> Consulta Clientes
+                </a>
+            </li>
+
+            {{-- CONFIGURAÇÕES --}}
+            <li>
+                <a href="{{ $podeConfig ? route('users.index') : '#' }}"
+                class="{{ $base }} {{ $podeConfig ? 'hover:bg-blue-700 text-gray-300' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
+                @unless ($podeConfig)
+                    onclick="return semPermissao(event)"
+                @endunless
+                >
+                    <i class="fa-solid fa-gear mr-3"></i> Configurações / Usuários
                 </a>
             </li>
 
