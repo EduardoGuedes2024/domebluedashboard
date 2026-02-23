@@ -84,19 +84,10 @@
                 @foreach($lojas as $loja)
                     <x-card-indicador 
                         :titulo="$loja['nome']" 
-                        :valor="'R$ ' . number_format($loja['atual'], 2, ',', '.')"
-                        :anterior="'R$ ' . number_format($loja['anterior'], 2, ',', '.')"
                         :cor="$loja['cor']" 
-                        icone="store" 
-                        :porcentagem="($loja['atual'] > $loja['anterior'] ? '+' : '-') " 
-                        :pedidosAtual="$loja['pedidos_atual']"
-                        :clientesAtual="$loja['clientes_atual']"
-                        :pedidosAnterior="$loja['pedidos_anterior']"
-                        :clientesAnterior="$loja['clientes_anterior']"
-                        
+                        :loja="$loja"  
                     />
                 @endforeach
-
             </section>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -149,6 +140,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+        /*
         const graficoVendasAtual = @json($graficoVendasAtual);
 
         const labels = Object.keys(graficoVendasAtual);
@@ -195,7 +187,7 @@
                     }
                 }
             }
-        });
+        }); */
     </script>
 
 @endsection
