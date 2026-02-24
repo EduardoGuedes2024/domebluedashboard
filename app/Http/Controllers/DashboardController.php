@@ -209,7 +209,7 @@ class DashboardController extends Controller
                 ],
 
                 [
-                    'nome' => 'Ecomm Atacado', 
+                    'nome' => 'Ecomm Amissima', 
                     'cor' => 'yellow',
 
                      
@@ -256,7 +256,7 @@ class DashboardController extends Controller
                 'JK Iguatemi'     => (float) ($dadosAtual->jk_amissima ?? 0) + (float) ($dadosAtual->jk_syssa ?? 0),
                 'Rio de Janeiro'     => (float) ($dadosAtual->rio_amissima ?? 0) + (float) ($dadosAtual->rio_syssa ?? 0),
                 'Atacado'         => (float) ($dadosAtual->atacado_amissima ?? 0) + (float) ($dadosAtual->atacado_syssa ?? 0),
-                'Ecomm Atacado'   => (float) ($dadosAtual->ecommerce_venda ?? 0),
+                'Ecomm Amissima'   => (float) ($dadosAtual->ecommerce_venda ?? 0),
                 'Curitiba'        => (float) ($dadosAtual->curitiba_amissima ?? 0) + (float) ($dadosAtual->curitiba_syssa ?? 0),
             ];
             
@@ -275,7 +275,7 @@ class DashboardController extends Controller
                 ['nome' => 'JK Iguatemi', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'orange', 'pedidos_atual' => 0, 'clientes_atual' => 0, 'pedidos_anterior' => 0, 'clientes_anterior' => 0],
                 ['nome' => 'Rio de Janeiro', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'green', 'pedidos_atual' => 0, 'clientes_atual' => 0, 'pedidos_anterior' => 0, 'clientes_anterior' => 0],
                 ['nome' => 'Atacado', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'pink', 'pedidos_atual' => 0, 'clientes_atual'=> 0,'pedidos_anterior'=> 0,'clientes_anterior'=> 0],
-                ['nome' =>'Ecomm Atacado', 'total_atual'=> 0,'total_anterior'=> 0,'cor'=>'yellow','pedidos_atual'=> 0,'clientes_atual'=> 0,'pedidos_anterior'=> 0,'clientes_anterior'=>0],
+                ['nome' =>'Ecomm Amissima', 'total_atual'=> 0,'total_anterior'=> 0,'cor'=>'yellow','pedidos_atual'=> 0,'clientes_atual'=> 0,'pedidos_anterior'=> 0,'clientes_anterior'=>0],
                 ['nome' => 'Curitiba', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'red', 'pedidos_atual' => 0, 'clientes_atual' => 0, 'pedidos_anterior' => 0, 'clientes_anterior' => 0],
             ];
         }

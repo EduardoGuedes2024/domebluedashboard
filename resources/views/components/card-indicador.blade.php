@@ -24,7 +24,7 @@
             <p class="text-2xl font-black text-gray-800">R$ {{ number_format($loja['total_atual'] ?? 0, 2, ',', '.') }}</p>
 
             {{--- CONDIÇAO PARA MOTAGEN DOS CARDS - ECOMM SYSSA E ECOMM ATACADO---}}
-            @if($titulo !== 'Ecomm Syssa' && $titulo !== 'Ecomm Atacado')
+            @if($titulo !== 'Ecomm Syssa' && $titulo !== 'Ecomm Amissima')
 
                 <div class="grid grid-cols-2 gap-2 border-y border-gray-300 py-2">
 
@@ -75,7 +75,7 @@
             <p class="text-lg font-bold text-gray-800">R$ {{ number_format($loja['total_anterior'] ?? 0, 2, ',', '.') }}</p>
             
             {{--- CONDIÇAO PARA MOTAGEN DOS CARDS - ECOMM SYSSA E ECOMM ATACADO---}}
-            @if($titulo !== 'Ecomm Syssa' && $titulo !== 'Ecomm Atacado')
+            @if($titulo !== 'Ecomm Syssa' && $titulo !== 'Ecomm Amissima')
 
                 <div class="grid grid-cols-2 gap-2 border-y border-gray-300 py-2">
 
