@@ -133,7 +133,7 @@
                 <tbody class="divide-y divide-gray-100 font-bold text-slate-700">
 
                     {{--- 30 dias ---}}
-                    <tr>
+                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '30']) }}'" class="cursor-pointer hover:bg-slate-50">
                         
                         <td class="px-4 py-4 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-green-500"></div> 30 Dias</td>
                         
@@ -148,7 +148,7 @@
                     </tr>
 
                     {{--- 60 dias---}}
-                    <tr>
+                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '60']) }}'" class="cursor-pointer hover:bg-slate-50">
                         
                         <td class="px-4 py-4 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-yellow-400"></div> 60 Dias</td>
                         
@@ -164,7 +164,7 @@
                     </tr>
 
                     {{--- 90 dias ---}}
-                    <tr>
+                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '90']) }}'" class="cursor-pointer hover:bg-slate-50">
 
                         <td class="px-4 py-4 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-orange-400"></div> 90 Dias</td>
 
@@ -179,7 +179,7 @@
                     </tr>
 
                     {{---- 120 dias ---}}
-                    <tr>
+                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '120']) }}'" class="cursor-pointer hover:bg-slate-50">
 
                         <td class="px-4 py-4 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-red-500"></div> 120 Dias</td>
 
@@ -194,7 +194,7 @@
                     </tr>
 
                     {{--- 150 dias --}}
-                    <tr class="bg-red-50/50">
+                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '150']) }}'" class="bg-red-50/50 cursor-pointer hover:bg-slate-50">
 
                         <td class="px-4 py-4 flex items-center gap-2 font-black text-red-700"><div class="w-2 h-2 rounded-full bg-red-800"></div> Acima 150 Dias</td>
 

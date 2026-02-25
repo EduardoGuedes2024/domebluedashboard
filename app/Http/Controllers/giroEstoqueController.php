@@ -120,4 +120,89 @@ class GiroEstoqueController extends Controller
             'grupos'          => $grupos
         ]);
     }
+
+    public function listaProdutos(Request $request) 
+    {
+        $unidade = $request->get('loja', 'todas');
+        $grupo = $request->get('grupo');
+        $periodo = $request->get('periodo');
+
+        $filtroGrupo = $grupo ? "AND G.des_grupo = '{$grupo}'" : "";
+
+        // 1. Definição da lógica de Soma e Filtro de Tempo
+        if ($unidade === 'todas') {
+            $saldoSoma = "(G.saldo_jk + G.saldo_curitiba + G.saldo_atacado + G.saldo_rj + G.saldo_outlet + G.saldo_ecommerce)";
+            
+            $filtroTempo = match($periodo) {
+                '30'  => "ca.data_final >= DATEADD(DAY, -30, GETDATE())",
+                '60'  => "ca.data_final BETWEEN DATEADD(DAY, -60, GETDATE()) AND DATEADD(DAY, -31, GETDATE())",
+                '90'  => "ca.data_final BETWEEN DATEADD(DAY, -90, GETDATE()) AND DATEADD(DAY, -61, GETDATE())",
+                '120' => "ca.data_final BETWEEN DATEADD(DAY, -120, GETDATE()) AND DATEADD(DAY, -91, GETDATE())",
+                '150' => "(ca.data_final < DATEADD(DAY, -120, GETDATE()) OR ca.data_final = '1900-01-01' OR ca.data_final IS NULL)",
+            };
+
+            $sql = "
+                SELECT 
+                    G.cod_produto, 
+                    MAX(G.cod_produto_pai) as cod_produto_pai,
+                    MAX(G.des_produto) as des_produto,
+                    SUM($saldoSoma) as saldo,
+                    MAX(G.preco_01) as preco,
+                    MAX(E.refid_pai) as refid_pai 
+                FROM VW_SALDO_GERAL G
+                LEFT JOIN VW_SALDO_ESTOQUE E ON G.cod_produto = E.cod_produto
+                CROSS APPLY (
+                    SELECT MAX(v) as data_final 
+                    FROM (VALUES (G.ultima_venda_jk),(G.ultima_venda_cj),(G.ultima_venda_atacado),(G.ultima_venda_rj),(G.ultima_venda_ecommerce),(G.ultima_venda_outlet)) AS value(v)
+                ) ca
+                WHERE $saldoSoma > 0 
+                AND $filtroTempo 
+                $filtroGrupo
+                GROUP BY G.cod_produto 
+                ORDER BY saldo DESC
+            ";
+        } else {
+            // Mapeamento para Lojas Individuais
+            $map = [
+                'jk' => ['saldo' => 'saldo_jk', 'data' => 'ultima_venda_jk'],
+                'alphaville' => ['saldo' => 'saldo_outlet', 'data' => 'ultima_venda_outlet'],
+                'curitiba' => ['saldo' => 'saldo_curitiba', 'data' => 'ultima_venda_cj'],
+                'rio' => ['saldo' => 'saldo_rj', 'data' => 'ultima_venda_rj'],
+                'atacado' => ['saldo' => 'saldo_atacado', 'data' => 'ultima_venda_atacado'],
+                'ecommerce' => ['saldo' => 'saldo_ecommerce', 'data' => 'ultima_venda_ecommerce'],
+            ];
+
+            $saldoCol = $map[$unidade]['saldo'];
+            $dataCol = $map[$unidade]['data'];
+
+            $condicaoData = match($periodo) {
+                '30'  => ">= DATEADD(DAY, -30, GETDATE())",
+                '60'  => "BETWEEN DATEADD(DAY, -60, GETDATE()) AND DATEADD(DAY, -31, GETDATE())",
+                '90'  => "BETWEEN DATEADD(DAY, -90, GETDATE()) AND DATEADD(DAY, -61, GETDATE())",
+                '120' => "BETWEEN DATEADD(DAY, -120, GETDATE()) AND DATEADD(DAY, -91, GETDATE())",
+                '150' => "< DATEADD(DAY, -120, GETDATE()) OR G.{$dataCol} = '1900-01-01' OR G.{$dataCol} IS NULL",
+            };
+
+            $sql = "
+                SELECT 
+                    G.cod_produto, 
+                    MAX(G.cod_produto_pai) as cod_produto_pai,
+                    MAX(G.des_produto) as des_produto,
+                    SUM(G.{$saldoCol}) as saldo,
+                    MAX(G.preco_01) as preco,
+                    MAX(E.refid_pai) as refid_pai 
+                FROM VW_SALDO_GERAL G
+                LEFT JOIN VW_SALDO_ESTOQUE E ON G.cod_produto = E.cod_produto
+                WHERE G.{$saldoCol} > 0 
+                AND (G.{$dataCol} {$condicaoData})
+                $filtroGrupo
+                GROUP BY G.cod_produto 
+                ORDER BY saldo DESC
+            ";
+        }
+
+        $produtos = DB::select($sql);
+
+        return view('giroEstoqueLista', compact('produtos', 'unidade', 'periodo'));
+    }
 }
