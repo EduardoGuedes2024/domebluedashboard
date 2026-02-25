@@ -46,6 +46,7 @@
                 $podeEstoque = $isAdmin || (int) ($user->domeblue_estoque ?? 0) === 1;
                 $podeEstoqueLojas = $isAdmin || (int) ($user->relatorios_lojas ?? 0) === 1;
                 $podeMovimentacao = $isAdmin || (int) ($user->movimento_estoque ?? 0) === 1;
+                $podeGiroEstoque = $isAdmin || (int) ($user->giro_estoque ?? 0) === 1;
 
                 ///--- CLIENTES ---- \\\
                 $podeClienteA = $isAdmin || (int) ($user->clientes_ativos ?? 0) === 1;
@@ -205,7 +206,16 @@
                     >
                         <i class="fas fa-box mr-3"></i> Movimentação Estoque
                     </a>
-
+                    
+                    {{----Giro Estoque---}}
+                    <a href="{{ $podeGiroEstoque ? route('giroEstoque') : '#'}}"
+                        class="{{ $base}} {{ $podeGiroEstoque ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
+                        @unless ($podeGiroEstoque)
+                            onclick="return semPermissao(event)"
+                        @endunless
+                    >
+                        <i class="fa-solid fa-chart-pie mr-3"></i> Giro Estoque
+                    </a>
 
                 </div>
             </li>

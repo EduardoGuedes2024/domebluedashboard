@@ -18,6 +18,7 @@ use App\http\Controllers\RelatorioVendasEcommerceController;
 use App\http\Controllers\RelatorioVendasCuritibaController;
 use App\Http\Controllers\EcommerceUfController;
 use App\Http\Controllers\ClientesAtivosController;
+use App\Http\Controllers\giroEstoqueController;
 use Symfony\Component\Routing\Route as RoutingRoute;
 
 Route::get('/', function () {
@@ -121,6 +122,11 @@ Route::get('/movimentacao_estoque', [MovimentacaoEstoqueController::class, 'inde
 //PDF Movimento estoque
 Route::get('/movimentacao_estoque/export/pdf', [MovimentacaoEstoqueController::class, 'exportPdf'])
     ->name('movimentacao.pdf');
+
+// Giro Estoque
+route::get('/giroEstoque', [giroEstoqueController::class,'index'])
+    ->middleware(['auth', 'perm:giro_estoque'])
+    ->name('giroEstoque');
 
 ///////// ------- CLIENTES -------- \\\\\\\\\\
 
