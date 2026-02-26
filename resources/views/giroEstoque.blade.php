@@ -9,82 +9,68 @@
     $pct = fn($v) => number_format($v, 2, ',', '.') . '%';
 @endphp
 
-{{-- FILTROS --}}
+{{-- Overlay de Carregamento --}}
+<div id="loader-overlay" style="display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 9999; align-items: center; justify-content: center; cursor: wait;">
+    <div class="flex flex-col items-center">
+        <img src="{{ asset('imagens/loader.gif') }}" alt="Carregando..." class="w-12 h-12">
+        <h3 class="text-blue-900 font-black mt-4 uppercase">Analisando Giro de Estoque</h3>
+        <p class="text-slate-500 text-sm">Calculando tempo de permanência nas prateleiras...</p>
+    </div>
+</div>
+
+{{-- TITULOS E FILTROS --}}
 <header class="mb-6 bg-blue-50 p-6 rounded-xl shadow-sm border border-gray-200">
-
     <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
-
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Giro de Estoque</h1>
-            <p class="text-gray-500 text-sm">Análise tempo de permanência e giro de estoque</p>
+            <p class="text-gray-500 text-sm">Análise tempo de permanência e giro de estoque por unidade</p>
         </div>
 
-        <form method="GET" action="{{ route('giroEstoque') }}" class="flex flex-wrap items-end gap-3">
+        <form method="GET" action="{{ route('giroEstoque') }}" id="formGiro" class="flex flex-wrap items-end gap-3">
             {{-- Unidade --}}
             <div class="w-48">
-
-                <label class="block text-[12px] font-black text-slate-400 uppercase mb-1">loja</label>
-
-                <select name="loja" class="w-full border rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-
-                    <option value="todas" @selected(request('loja') == 'todas')>Todas as Lojas</option>
-
+                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">loja</label>
+                <select name="loja" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" required>
+                    <option value="" disabled @selected(!request('loja'))>Selecione a Unidade</option>
                     <option value="jk" @selected(request('loja') == 'jk')>JK Iguatemi</option>
-
                     <option value="alphaville" @selected(request('loja') == 'alphaville')>Alphaville</option>
-
                     <option value="curitiba" @selected(request('loja') == 'curitiba')>Curitiba</option>
-
                     <option value="rio" @selected(request('loja') == 'rio')>Rio de Janeiro</option>
-
                     <option value="atacado" @selected(request('loja') == 'atacado')>Atacado</option>
-
                     <option value="ecommerce" @selected(request('loja') == 'ecommerce')>Ecommerce</option>
-
                 </select>
-
             </div>
 
             {{-- Grupo --}}
             <div class="w-48">
-
-                <label class="block text-[12px] font-black text-slate-400 uppercase mb-1">Grupo</label>
-
-                <select name="grupo" class="w-full border rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-
-                    <option value="">Todos</option>
+                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Grupo</label>
+                <select name="grupo" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                    <option value="">Todos os Grupos</option>
                     @foreach($grupos as $g)
                         <option value="{{ $g }}" @selected(request('grupo') == $g)>{{ $g }}</option>
                     @endforeach
-                    
                 </select>
-
             </div>
 
             <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-slate-900 transition flex items-center gap-2">
                 <i class="fa-solid fa-magnifying-glass"></i> Filtrar
             </button>
-
         </form>
-
     </div>
-
 </header>
+
+{{--- Card Informativo Tela Inicial (PADRÃO QUE VOCÊ PEDIU) ---}}
+@if(!$filtrado)
+    <div class="bg-white p-12 rounded-xl border border-blue-100 text-center shadow-sm">
+        <i class="fa-solid fa-layer-group text-blue-200 text-6xl mb-4"></i>
+        <h3 class="text-slate-700 font-black text-xl uppercase tracking-tighter">Consulta de Giro por Loja</h3>
+        <p class="text-blue-600 font-bold mt-2 text-sm">Selecione uma unidade e um grupo para analisar o estoque parado.</p>
+    </div>
+@else
 
 
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-    {{-- Coluna do Gráfico --}}
-    <div class="lg:col-span-7 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-
-        <h3 class="text-lg font-black text-slate-800 mb-4 uppercase tracking-tighter">
-            {{ $LojaSelecionada == 'todas' ? 'Rede Total' : strtoupper($LojaSelecionada) }}
-        </h3>
-
-        <div class="h-[450px]">
-            <canvas id="chartGiroEstoque"></canvas>
-        </div>
-
-    </div>
+    
 
     {{-- Coluna dos Dados--}}
     <div class="lg:col-span-5 flex flex-col gap-4">
@@ -133,7 +119,7 @@
                 <tbody class="divide-y divide-gray-100 font-bold text-slate-700">
 
                     {{--- 30 dias ---}}
-                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '30']) }}'" class="cursor-pointer hover:bg-slate-50">
+                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '30', 'grupo' => request('grupo')]) }}'" class="cursor-pointer hover:bg-slate-50">
                         
                         <td class="px-4 py-4 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-green-500"></div> 30 Dias</td>
                         
@@ -148,7 +134,7 @@
                     </tr>
 
                     {{--- 60 dias---}}
-                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '60']) }}'" class="cursor-pointer hover:bg-slate-50">
+                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '60', 'grupo' => request('grupo')]) }}'" class="cursor-pointer hover:bg-slate-50">
                         
                         <td class="px-4 py-4 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-yellow-400"></div> 60 Dias</td>
                         
@@ -164,7 +150,7 @@
                     </tr>
 
                     {{--- 90 dias ---}}
-                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '90']) }}'" class="cursor-pointer hover:bg-slate-50">
+                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '90', 'grupo' => request('grupo')]) }}'" class="cursor-pointer hover:bg-slate-50">
 
                         <td class="px-4 py-4 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-orange-400"></div> 90 Dias</td>
 
@@ -179,7 +165,7 @@
                     </tr>
 
                     {{---- 120 dias ---}}
-                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '120']) }}'" class="cursor-pointer hover:bg-slate-50">
+                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '120', 'grupo' => request('grupo')]) }}'" class="cursor-pointer hover:bg-slate-50">
 
                         <td class="px-4 py-4 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-red-500"></div> 120 Dias</td>
 
@@ -194,7 +180,7 @@
                     </tr>
 
                     {{--- 150 dias --}}
-                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '150']) }}'" class="bg-red-50/50 cursor-pointer hover:bg-slate-50">
+                    <tr onclick="window.location='{{ route('giroEstoque.lista', ['loja' => $LojaSelecionada, 'periodo' => '150', 'grupo' => request('grupo')]) }}'" class="bg-red-50/50 cursor-pointer hover:bg-slate-50">
 
                         <td class="px-4 py-4 flex items-center gap-2 font-black text-red-700"><div class="w-2 h-2 rounded-full bg-red-800"></div> Acima 150 Dias</td>
 
@@ -213,7 +199,22 @@
             </table>
         </div>
     </div>
+
+    {{-- Coluna do Gráfico --}}
+    <div class="lg:col-span-7 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+
+        <h3 class="text-lg font-black text-slate-800 mb-4 uppercase tracking-tighter">
+            {{ $LojaSelecionada == 'todas' ? 'Rede Total' : strtoupper($LojaSelecionada) }}
+        </h3>
+
+        <div class="h-[450px]">
+            <canvas id="chartGiroEstoque"></canvas>
+        </div>
+
+    </div>
+    
 </div>
+@endif
 
 @endsection
 
@@ -221,35 +222,28 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const loader = document.getElementById('loader-overlay');
+        const form = document.getElementById('formGiro');
+
+        if(form) {
+            form.addEventListener('submit', () => { loader.style.display = 'flex'; });
+        }
+
+        @if($filtrado)
         const ctx = document.getElementById('chartGiroEstoque').getContext('2d');
         new Chart(ctx, {
             type: 'pie',
             data: {
                 labels: ['30 Dias', '60 Dias', '90 Dias', '120 Dias', '150+ Dias'],
                 datasets: [{
-                    data: [
-                        {{ $resumoGiro['30 dias'] ?? 0 }}, 
-                        {{ $resumoGiro['60 dias'] ?? 0 }}, 
-                        {{ $resumoGiro['90 dias'] ?? 0 }}, 
-                        {{ $resumoGiro['120 dias'] ?? 0 }}, 
-                        {{ $resumoGiro['150 dias'] ?? 0 }}
-                    ],
+                    data: [{{ $resumoGiro['30 dias'] }}, {{ $resumoGiro['60 dias'] }}, {{ $resumoGiro['90 dias'] }}, {{ $resumoGiro['120 dias'] }}, {{ $resumoGiro['150 dias'] }}],
                     backgroundColor: ['#22c55e', '#facc15', '#fb923c', '#ef4444', '#991b1b'],
-                    borderWidth: 2,
-                    borderColor: '#ffffff'
+                    borderWidth: 2, borderColor: '#ffffff'
                 }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { padding: 20, font: { weight: 'bold' } }
-                    }
-                }
-            }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
         });
+        @endif
     });
 </script>
 @endpush
