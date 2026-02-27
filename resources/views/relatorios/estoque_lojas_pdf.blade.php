@@ -8,7 +8,7 @@
 
         body { font-family: DejaVu Sans, sans-serif; font-size: 10px; color: #333; margin: 0; padding: 0; }
 
-        /* CABEÇALHO FIXO (Identidade igual à Movimentação) */
+        /* CABEÇALHO FIXO */
         .header { position: fixed; top: -80px; left: 0; right: 0; text-align: center; border-bottom: 2px solid #1e3a8a; padding-bottom: 10px; height: 70px; }
         .header h2 { margin: 0; font-size: 18px; color: #333; text-transform: uppercase; letter-spacing: 1px; }
         .header p { margin: 5px 0 0 0; font-size: 11px; color: #444; }
@@ -42,7 +42,9 @@
         .td-total { font-weight: 900; background-color: #f1f5f9; color: #1e3a8a; }
 
     </style>
+
 </head>
+
 <body>
 
     {{-- CABEÇALHO QUE SE REPETE --}}

@@ -132,7 +132,7 @@
         @foreach($cards as $card)
             <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 {{-- Cabeçalho do Card --}}
-                <div class="px-6 py-4 bg-slate-50 border-b border-gray-200 flex flex-wrap items-center justify-between gap-3">
+                <div class="px-3 py-4 bg-slate-50 border-b border-gray-200 flex flex-wrap items-center justify-between gap-3">
                     <div class="flex items-center gap-3">
                         <span class="bg-slate-800 text-white text-[13px] font-black px-3 py-1 rounded-full uppercase">
                             Ref: {{ $card['produto_pai'] }}
@@ -158,11 +158,11 @@
                     </div>
                 </div>
 
-                <div class="p-6">
+                <div class="px-3 py-4">
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                         {{-- Coluna da Foto --}}
                         <div class="lg:col-span-2">
-                            <div class="w-full h-[350px] bg-white border border-gray-200 rounded-xl overflow-hidden flex items-center justify-center">
+                            <div class="w-full h-[300px] bg-white  rounded-xl overflow-hidden flex items-center justify-center">
                                 @php
                                     $refid = $card['refid'] ?? null;
                                     $codPai = (string)($card['produto_pai'] ?? '');
@@ -171,8 +171,8 @@
                                 @endphp
 
                                 @if($imgUrl)
-                                    <img src="{{ $imgUrl }}" class="w-full h-full object-cover rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                    <div class="w-full h-full bg-slate-100 flex items-center justify-center text-gray-400 font-bold" style="display: none;">SEM FOTO</div>
+                                    <img src="{{ $imgUrl }}" class="max-w-full max-h-full object-contain rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="w-full h-[300px] bg-slate-100 flex items-center justify-center text-gray-400 font-bold" style="display: none;">SEM FOTO</div>
                                 @else
                                     <div class="w-full h-full bg-slate-100 flex items-center justify-center text-gray-400 font-bold">SEM FOTO</div>
                                 @endif

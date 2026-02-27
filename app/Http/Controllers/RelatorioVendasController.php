@@ -30,7 +30,7 @@ class RelatorioVendasController extends Controller
         $fim = $request->get('data_fim');
         $empresa = $request->get('empresa');
 
-        $perPage = 10;
+        $perPage = 20;
         $page = max(1, (int) $request->get('page', 1));
         $start = (($page - 1) * $perPage) + 1;
         $end = $page * $perPage;

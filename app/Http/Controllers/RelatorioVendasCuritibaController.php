@@ -19,7 +19,7 @@ class RelatorioVendasCuritibaController extends Controller
         $empresa = $request->get('empresa');
         $lojaAlvo = 'Curitiba'; // LOJA TRAVADA AQUI
 
-        $perPage = 10;
+        $perPage = 30;
         $page = max(1, (int) $request->get('page', 1));
         $start = (($page - 1) * $perPage) + 1;
         $end = $page * $perPage;
