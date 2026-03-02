@@ -4,9 +4,72 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class GiroEstoqueController extends Controller
 {
+
+    ///// ----- FUNÇAO DADOS PARA O PDF ---- \\\\\
+    public function gerarPdf(Request $request) 
+    {
+        $unidade = $request->get('loja');
+        $grupo = $request->get('grupo');
+        $periodo = $request->get('periodo');
+
+        $map = [
+            'jk' => ['saldo' => 'saldo_jk', 'data' => 'ultima_venda_jk'],
+
+            'alphaville' => ['saldo' => 'saldo_outlet', 'data' => 'ultima_venda_outlet'],
+
+            'curitiba' => ['saldo' => 'saldo_curitiba', 'data' => 'ultima_venda_cj'],
+
+            'rio' => ['saldo' => 'saldo_rj', 'data' => 'ultima_venda_rj'],
+
+            'atacado' => ['saldo' => 'saldo_atacado', 'data' => 'ultima_venda_atacado'],
+
+            'ecommerce' => ['saldo' => 'saldo_ecommerce', 'data' => 'ultima_venda_ecommerce'],
+        ];
+
+        $saldoCol = $map[$unidade]['saldo'] ?? 0;
+
+        $dataCol = $map[$unidade]['data'] ?? 0;
+
+        $filtroGrupo = $grupo ? "AND G.des_grupo = '{$grupo}'" : "";
+        $filtroGrupoTotal = $grupo ? "AND des_grupo = '{$grupo}'" : "";
+
+        $condicaoData = match($periodo) {
+            '30'  => "{$dataCol} >= DATEADD(DAY, -30, GETDATE())",
+            '60'  => "{$dataCol} BETWEEN DATEADD(DAY, -60, GETDATE()) AND DATEADD(DAY, -31, GETDATE())",
+            '90'  => "{$dataCol} BETWEEN DATEADD(DAY, -90, GETDATE()) AND DATEADD(DAY, -61, GETDATE())",
+            '120' => "{$dataCol} BETWEEN DATEADD(DAY, -120, GETDATE()) AND DATEADD(DAY, -91, GETDATE())",
+            '150' => "({$dataCol} < DATEADD(DAY, -120, GETDATE()) OR {$dataCol} = '1900-01-01' OR {$dataCol} IS NULL)",
+        };
+
+        $filtroGrupo = $grupo ? "AND G.des_grupo = '{$grupo}'" : "";
+        $condicaoLista = str_replace($dataCol, "G.{$dataCol}", $condicaoData);
+
+        $sql = "
+            SELECT DISTINCT
+                G.cod_produto, G.cod_produto_pai, G.des_produto, G.des1_produto, 
+                G.{$saldoCol} as saldo, G.preco_01 as preco
+            FROM VW_SALDO_GERAL G
+            WHERE CAST(G.{$saldoCol} AS INT) > 0 
+            AND ({$condicaoLista})
+            $filtroGrupo
+            ORDER BY G.cod_produto_pai DESC
+        ";
+
+        $produtos = DB::select($sql);
+
+        // Carrega uma view específica para o PDF (mais simples e sem o menu do sistema)
+        $pdf = Pdf::loadView('relatorios.giroEstoque_pdf', compact('produtos', 'unidade', 'periodo', 'grupo'))
+                ->setPaper('a4', 'portrait');
+
+        return $pdf->download("Giro_{$unidade}_{$periodo}dias.pdf");
+    }
+
+
+    /// ----- FUNÇAO PRINCIPAL DADOS E GRAFICO ------\\\\\
     public function index(Request $request)
     {
         // select grupos
@@ -118,6 +181,8 @@ class GiroEstoqueController extends Controller
         ]);
     }
 
+
+    /// ---- FUNÇAO DADOS LISTA PRODUTOS ---- \\\\\
     public function listaProdutos(Request $request) 
     {
         $unidade = $request->get('loja');
@@ -153,10 +218,10 @@ class GiroEstoqueController extends Controller
             '150' => "({$dataCol} < DATEADD(DAY, -120, GETDATE()) OR {$dataCol} = '1900-01-01' OR {$dataCol} IS NULL)",
         };
 
-        // 2. Criamos a versão para a LISTA colocando o prefixo G.
+        // Criamos a versão para a LISTA colocando o prefixo G.
         $condicaoLista = str_replace($dataCol, "G.{$dataCol}", $condicaoData);
 
-        // 3. Query da LISTA (Cards)
+        // Query da LISTA (Cards)
         $sqlLista = "
             SELECT DISTINCT
                 G.cod_produto, G.cod_produto_pai, G.des_produto, G.des1_produto, 

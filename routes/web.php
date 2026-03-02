@@ -131,7 +131,9 @@ route::get('/giroEstoque', [giroEstoqueController::class,'index'])
 // Giro Estoque Lista de produtos 
 Route::get('/giroEstoque/lista', [GiroEstoqueController::class, 'listaProdutos'])
     ->name('giroEstoque.lista');
-
+    
+//PDF Giro Estoque
+Route::get('/giro-estoque/pdf', [GiroEstoqueController::class, 'gerarPdf'])->name('giroEstoque.pdf');    
 ///////// ------- CLIENTES -------- \\\\\\\\\\
 
 

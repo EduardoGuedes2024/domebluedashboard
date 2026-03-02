@@ -25,9 +25,16 @@
         </div>
     </div>
 
-    <a href="{{ route('giroEstoque', ['loja' => $unidade, 'grupo' => request('grupo')]) }}" class="bg-blue-800 text-white px-5 py-2 rounded-lg font-bold hover:bg-slate-800 transition flex items-center gap-2">
-        <i class="fa-solid fa-arrow-left"></i> Voltar ao Gráfico
-    </a>
+    <div class="flex gap-2">
+        <a href="javascript:void(0)" id="btnPdf"
+        class="bg-blue-900 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition flex items-center gap-2">
+            <i class="fa-solid fa-download"></i> PDF
+        </a>
+
+        <a href="{{ route('giroEstoque', ['loja' => $unidade, 'grupo' => request('grupo')]) }}" class="bg-blue-800 text-white px-5 py-2 rounded-lg font-bold hover:bg-slate-800 transition flex items-center gap-2">
+            <i class="fa-solid fa-arrow-left"></i> Voltar ao Gráfico
+        </a>
+    </div>
 </header>
 
 
@@ -68,10 +75,7 @@
                 </div>
             @endif
 
-            {{-- Badge de Saldo sobre a foto --}}
-            <div class="absolute top-2 right-2 bg-slate-900/80 backdrop-blur-sm text-white text-[10px] font-black px-2 py-1 rounded-md">
-                {{ (int)$p->saldo }} UN
-            </div>
+            
         </div>
 
         {{-- Detalhes do Produto --}}
@@ -86,15 +90,39 @@
             <h4 class="text-[13px] font-bold text-slate-900 leading-tight uppercase truncate" title="{{ $p->des_produto }}">
                 {{ mb_convert_encoding($p->des_produto ,'UTF-8', 'ISO-8859-1') }}
             </h4>
+
             <h4 class="text-[13px] font-bold text-slate-900 leading-tight uppercase truncate" title="{{ $p->des_produto }}">
                 {{ mb_convert_encoding($p->des1_produto ,'UTF-8', 'ISO-8859-1') }}
             </h4>
+
             <div class="pt-1 flex justify-between items-center border-t border-slate-50">
                 <p class="text-[12px] text-slate-900 font-bold">PREÇO</p>
-                <p class="text-xs font-black text-slate-900">R$ {{ number_format($p->preco, 2, ',', '.') }}</p>
+                <p class="text-sm font-black text-slate-900">R$ {{ number_format($p->preco, 2, ',', '.') }}</p>
             </div>
+
+            {{-- --}}
+            <div class="pt-1 flex justify-between items-center border-t border-slate-50">
+                <p class="text-[12px] text-slate-900 font-bold">SALDO ATUAL</p>
+                <p class="text-sm font-black text-slate-900">{{ (int)$p->saldo }} UN</p>
+            </div>
+
         </div>
     </div>
 @endforeach
 </main>
 @endsection
+
+@push('scripts')
+<script>
+    document.getElementById('btnPdf').addEventListener('click', function() {
+    // Captura os parâmetros atuais da URL (loja, periodo, grupo)
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // Monta a URL para a rota de geração de PDF
+    const pdfUrl = "{{ route('giroEstoque.pdf') }}?" + urlParams.toString();
+    
+    // Abre o PDF em uma nova aba para não tirar o usuário da listagem
+    window.open(pdfUrl, '_blank');
+});
+</script>
+@endpush
