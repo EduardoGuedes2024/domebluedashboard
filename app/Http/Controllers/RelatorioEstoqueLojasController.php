@@ -127,7 +127,7 @@ class RelatorioEstoqueLojasController extends Controller
         $paisPage = null;
 
         if ($usarPaginacao) {
-            $perPage = 10;
+            $perPage = 30;
             $page  = max(1, (int) $request->get('page', 1));
             $start = (($page - 1) * $perPage) + 1; // rn inicial (1-based)
             $end   = $page * $perPage;             // rn final
@@ -448,7 +448,7 @@ class RelatorioEstoqueLojasController extends Controller
 
                     // preenche colunas de comparação mesmas colunas do layout
                     $vals = [
-                        'ALPHAVILLE' => (int)($r->saldo_alphaville ?? 0),
+                        'ALPHAVILLE' => (int)($r->saldo_outlet ?? 0),
                         'JK'         => (int)($r->saldo_jk ?? 0),
                         'RIO'        => (int)($r->saldo_rj ?? 0),
                         'ATACADO'    => (int)($r->saldo_atacado ?? 0),
