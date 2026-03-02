@@ -233,7 +233,7 @@ class GiroEstoqueController extends Controller
             AND G.{$dataCol} <> '1900-01-01'
             AND ({$condicaoLista}) -- Agora vai ler: (G.ultima_venda_jk BETWEEN ...)
             $filtroGrupo
-            ORDER BY G.cod_produto_pai ASC, G.des1_produto ASC
+            ORDER BY G.cod_produto_pai DESC, G.des1_produto DESC
         ";
 
         $produtos = DB::select($sqlLista);
