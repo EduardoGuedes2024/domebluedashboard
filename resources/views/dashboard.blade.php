@@ -155,6 +155,7 @@
             '#ec4899', // Atacado - Rosa
             '#eab308', // Ecommerce - Amarelo
             '#dc2626', // Curitiba - Vermelho
+            '#ec4899', // showroom - rosa
         ];
 
         const ctx = document.getElementById('salesChart').getContext('2d');

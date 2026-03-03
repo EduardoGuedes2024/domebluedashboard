@@ -8,7 +8,7 @@
     {{-- TÍTULO DA LOJA --}}
     <div class="mb-3">
 
-        <span class="px-4 py-1 bg-{{ $cor }}-100 text-{{ $cor }}-600 text-xl font-black rounded uppercase tracking-tighter">
+        <span class="px-4 py-1 bg-{{ $cor }}-100 text-{{ $cor }}-700 text-xl font-black rounded uppercase tracking-tighter">
             {{ $titulo }}
         </span>
 

@@ -94,6 +94,14 @@ class DashboardController extends Controller
                         DB::raw('SUM(ISNULL(curitiba_peca, 0)) as curitiba_peca'),
                         DB::raw('SUM(ISNULL(curitiba_pedidos, 0)) as curitiba_pedidos'),
                         DB::raw('SUM(ISNULL(curitiba_clientes, 0)) as curitiba_clientes'),
+
+                        //SHOWROOM
+                        DB::raw('SUM(ISNULL(showroom, 0)) as showroom_amissima'),
+                        DB::raw('SUM(ISNULL(showroom_syssa, 0)) as showroom_syssa'),
+                        DB::raw('SUM(ISNULL(showroom_peca, 0)) as showroom_peca'),
+                        DB::raw('SUM(ISNULL(showroom_pedidos, 0)) as showroom_pedidos'),
+                        DB::raw('SUM(ISNULL(showroom_clientes, 0)) as showroom_clientes'),
+
                     ])
                     ->whereBetween('data_movimento', [$ini, $fim])
                     ->first();
@@ -245,6 +253,27 @@ class DashboardController extends Controller
                     'pedidos_anterior' =>$dadosAnterior->curitiba_pedidos ?? 0,
                     'clientes_anterior' =>$dadosAnterior->curitiba_clientes ?? 0,
                 ],
+
+                [
+                    'nome' => 'Showroom', 
+                    'cor' => 'pink',
+                    
+                    //ATUAL
+                    'amissima_atual' => $dadosAtual->showroom_amissima ?? 0, 
+                    'syssa_atual' => $dadosAtual->showroom_syssa ?? 0,
+                    'total_atual' => ($dadosAtual->showroom_amissima ?? 0) + ($dadosAtual->showroom_syssa ?? 0),
+                    'pecas_atual' => $dadosAtual->showroom_peca ?? 0,
+                    'pedidos_atual' => $dadosAtual->showroom_pedidos ?? 0, 
+                    'clientes_atual' => $dadosAtual->showroom_clientes ?? 0,
+                    
+                    //ANTERIOR
+                    'amissima_anterior' => $dadosAnterior->showroom_amissima ?? 0, 
+                    'syssa_anterior' => $dadosAnterior->showroom_syssa ?? 0,
+                    'total_anterior' => ($dadosAnterior->showroom_amissima ?? 0) + ($dadosAnterior->showroom_syssa ?? 0),
+                    'pecas_anterior' => $dadosAnterior->showroom_peca ?? 0,
+                    'pedidos_anterior' =>$dadosAnterior->showroom_pedidos ?? 0,
+                    'clientes_anterior' =>$dadosAnterior->showroom_clientes ?? 0,
+                ],
             ];
 
             // =========================
@@ -258,6 +287,7 @@ class DashboardController extends Controller
                 'Atacado'         => (float) ($dadosAtual->atacado_amissima ?? 0) + (float) ($dadosAtual->atacado_syssa ?? 0),
                 'Ecomm Amissima'  => (float) ($dadosAtual->ecommerce_venda ?? 0),
                 'Curitiba'        => (float) ($dadosAtual->curitiba_amissima ?? 0) + (float) ($dadosAtual->curitiba_syssa ?? 0),
+                'Showroom'        => (float) ($dadosAtual->showroom_amissima ?? 0) + (float) ($dadosAtual->showroom_syssa ?? 0),
             ];
             
             $grafico=[];
@@ -275,8 +305,9 @@ class DashboardController extends Controller
                 ['nome' => 'JK Iguatemi', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'orange', 'pedidos_atual' => 0, 'clientes_atual' => 0, 'pedidos_anterior' => 0, 'clientes_anterior' => 0],
                 ['nome' => 'Rio de Janeiro', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'green', 'pedidos_atual' => 0, 'clientes_atual' => 0, 'pedidos_anterior' => 0, 'clientes_anterior' => 0],
                 ['nome' => 'Atacado', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'pink', 'pedidos_atual' => 0, 'clientes_atual'=> 0,'pedidos_anterior'=> 0,'clientes_anterior'=> 0],
-                ['nome' =>'Ecomm Amissima', 'total_atual'=> 0,'total_anterior'=> 0,'cor'=>'yellow','pedidos_atual'=> 0,'clientes_atual'=> 0,'pedidos_anterior'=> 0,'clientes_anterior'=>0],
+                ['nome' => 'Ecomm Amissima', 'total_atual'=> 0,'total_anterior'=> 0,'cor'=>'yellow','pedidos_atual'=> 0,'clientes_atual'=> 0,'pedidos_anterior'=> 0,'clientes_anterior'=>0],
                 ['nome' => 'Curitiba', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'red', 'pedidos_atual' => 0, 'clientes_atual' => 0, 'pedidos_anterior' => 0, 'clientes_anterior' => 0],
+                ['nome' => 'Showroom', 'total_atual' => 0, 'total_anterior' => 0, 'cor' => 'pink', 'pedidos_atual' => 0, 'clientes_atual' => 0, 'pedidos_anterior' => 0, 'clientes_anterior' => 0],
             ];
         }
 
