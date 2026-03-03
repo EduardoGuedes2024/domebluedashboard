@@ -12,7 +12,7 @@ class Operador extends Authenticatable
     protected $keyType = 'string';
     public $timestamps = false;
 
-    protected $hidden = ['senha', 'senha_hash'];
+    protected $hidden = ['senha', 'senha_hash', 'remember_token',];
 
     protected $casts = [
         'admin' => 'boolean',

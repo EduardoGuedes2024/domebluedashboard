@@ -254,9 +254,9 @@ class DashboardController extends Controller
                 'Alphaville'      => (float) ($dadosAtual->alphaville_amissima ?? 0) + (float) ($dadosAtual->alphaville_syssa ?? 0),
                 'Ecomm Syssa'     => (float) ($dadosAtual->syssa_venda ?? 0),
                 'JK Iguatemi'     => (float) ($dadosAtual->jk_amissima ?? 0) + (float) ($dadosAtual->jk_syssa ?? 0),
-                'Rio de Janeiro'     => (float) ($dadosAtual->rio_amissima ?? 0) + (float) ($dadosAtual->rio_syssa ?? 0),
+                'Rio de Janeiro'  => (float) ($dadosAtual->rio_amissima ?? 0) + (float) ($dadosAtual->rio_syssa ?? 0),
                 'Atacado'         => (float) ($dadosAtual->atacado_amissima ?? 0) + (float) ($dadosAtual->atacado_syssa ?? 0),
-                'Ecomm Amissima'   => (float) ($dadosAtual->ecommerce_venda ?? 0),
+                'Ecomm Amissima'  => (float) ($dadosAtual->ecommerce_venda ?? 0),
                 'Curitiba'        => (float) ($dadosAtual->curitiba_amissima ?? 0) + (float) ($dadosAtual->curitiba_syssa ?? 0),
             ];
             
