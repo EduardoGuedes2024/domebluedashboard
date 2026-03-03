@@ -50,7 +50,7 @@
         <form method="GET" action="{{ route('estoque_lojas') }}" class="flex flex-col sm:flex-row gap-2 items-end">
 
             {{-- filtro local estoque --}}
-            <div class="w-full sm:w-72">
+            <div class="w-full sm:w-40">
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Loja</label>
 
                 <select name="local"
@@ -60,9 +60,19 @@
                     @endforeach
                 </select>
             </div>
+
+            {{-- Filtro de Empresa --}}
+            <div class="w-full sm:w-40">
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Empresa</label>
+                <select name="empresa" class="w-full border rounded-lg p-2 text-sm">
+                    <option value="">Todas</option>
+                    <option value="amissima" @selected(request('empresa') == 'amissima')>Amissima</option>
+                    <option value="syssa" @selected(request('empresa') == 'syssa')>Syssa</option>
+                </select>
+            </div>
             
             {{-- Filtro de Grupo --}}
-            <div class="w-full sm:w-48">
+            <div class="w-full sm:w-40">
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Grupo (Peça)</label>
                 <select name="grupo" class="w-full border rounded-lg p-2 text-sm">
                     <option value="">Todos os Grupos</option>
@@ -73,7 +83,7 @@
             </div>
 
             {{-- Filtro de Subgrupo --}}
-            <div class="w-full sm:w-48">
+            <div class="w-full sm:w-40">
                 <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Subgrupo (Tecido)</label>
                 <select name="subgrupo" class="w-full border rounded-lg p-2 text-sm">
                     <option value="">Todos os Tecidos</option>
@@ -85,21 +95,26 @@
             
             {{-- botao buscar--}}
             <button type="submit" id="btnBuscar"
-                class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-slate-900 transition flex items-center gap-2">
+                class="bg-blue-600 text-white px-2 py-2 rounded-lg font-bold hover:bg-slate-900 transition flex items-center gap-1">
                 <i class="fa-solid fa-magnifying-glass"></i> Buscar
             </button>
             
             {{-- botao limpar--}}
             <a href="{{ route('estoque_lojas') }}"
-                class="bg-slate-200 text-slate-800 px-4 py-2 rounded-lg font-bold hover:bg-slate-300 transition">
+                class="bg-slate-300 text-slate-800 px-2 py-2 rounded-lg font-bold hover:bg-slate-300 transition">
                 Limpar
             </a>
-
-            {{-- botao pdf--}}
-            <a href="javascript:void(0)" id="btnPdf"
-                class="bg-blue-900 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition flex items-center gap-2">
-                <i class="fa-solid fa-download"></i> PDF
-            </a>
+            <div class="flex gap-1">
+                {{-- botao pdf--}}
+                <a href="javascript:void(0)" onclick="gerarPdf('completo')"
+                    class="bg-blue-900 text-white px-2 py-2 rounded-lg font-bold hover:bg-blue-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf"></i>PDF
+                </a>
+                <a href="javascript:void(0)" onclick="gerarPdf('grade')"
+                    class="bg-green-900 text-white px-2 py-2 rounded-lg font-bold hover:bg-green-700 transition flex items-center gap-2">
+                    <i class="fa-regular fa-file-pdf"></i>PDF
+                </a>
+            </div>
         </form>
     </div>
 </header>
@@ -359,6 +374,27 @@
 
 @push('scripts')
 <script>
+
+     // Ao clicar no botão PDF
+    function gerarPdf(tipo) {
+        const local = document.querySelector('select[name="local"]').value;
+        const grupo = document.querySelector('select[name="grupo"]').value;
+        const subgrupo = document.querySelector('select[name="subgrupo"]').value;
+        const empresa = document.querySelector('select[name="empresa"]').value;
+
+        const baseUrl = "{{ route('estoque_lojas.export.pdf') }}";
+        const params = new URLSearchParams({
+            local: local, grupo: grupo, subgrupo: subgrupo, empresa: empresa, tipo: tipo
+        });
+
+        document.getElementById('loader-overlay').style.display = 'flex';
+        window.location.href = `${baseUrl}?${params.toString()}`;
+        
+        setTimeout(() => {
+            document.getElementById('loader-overlay').style.display = 'none';
+        }, 5000);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const loader = document.getElementById('loader-overlay');
 
@@ -376,37 +412,7 @@
             });
         }
 
-        // Ao clicar no botão PDF
-        //EXPORTAÇÃO PDF (Capturando filtros atuais)
-        const btnPdf = document.getElementById('btnPdf');
-        if (btnPdf) {
-            btnPdf.addEventListener('click', function(e) {
-                e.preventDefault();
-
-                // Pegamos os valores atuais dos filtros na tela
-                const local = document.querySelector('select[name="local"]').value;
-                const grupo = document.querySelector('select[name="grupo"]').value;
-                const subgrupo = document.querySelector('select[name="subgrupo"]').value;
-
-                // 2. Montamos a URL com os parâmetros dinâmicos
-                const baseUrl = "{{ route('estoque_lojas.export.pdf') }}";
-                const params = new URLSearchParams({
-                    local: local,
-                    grupo: grupo,
-                    subgrupo: subgrupo
-                });
-
-                //  Mostramos o loader e redirecionamos
-                showLoader();
-                window.location.href = `${baseUrl}?${params.toString()}`;
-                
-                // Timer de segurança para esconder o loader
-                setTimeout(() => {
-                    const loader = document.getElementById('loader-overlay');
-                    loader.style.setProperty('display', 'none', 'important');
-                }, 15000); 
-            });
-        }
+       
 
         //  Paginação (Apenas nos links de números lá embaixo)
         // Seleciona links dentro da navegação de paginação para não pegar o menu lateral

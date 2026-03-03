@@ -64,6 +64,7 @@ class RelatorioEstoqueLojasController extends Controller
     public function exportPdf(Request $request)
     {
         // sem paginação (puxa tudo)
+        $tipo = $request->get('tipo', 'completo');
         $data = $this->buildRelatorio($request, false);
 
         $local = (int) ($data['local'] ?? 0);
@@ -74,6 +75,7 @@ class RelatorioEstoqueLojasController extends Controller
             'cards'      => $data['cards'],
             'lojasFixas' => $data['lojasFixas'],
             'localLabel' => $localLabel,
+            'modoGrade'  => ($tipo === 'grade'),
         ])->setPaper('a4', 'portrait');
 
         $nomeArquivo = 'estoque_lojas_' . ($local ?: 'todas') . '_' . now()->format('Ymd_His') . '.pdf';
@@ -114,13 +116,18 @@ class RelatorioEstoqueLojasController extends Controller
 
         $subgrupo = $request->get('subgrupo');
 
-        $filtro_grupos = "";
-        if($grupo) {
-            $filtro_grupos .= "AND des_grupo = '$grupo' ";
-        } 
-        if($subgrupo) {
-            $filtro_grupos .= "AND des_sgrupo = '$subgrupo'";
-        } 
+        $empresa = $request->get('empresa');
+
+        $filtro_extras = ""; 
+        if($grupo) $filtro_extras .= " AND des_grupo = '$grupo' ";
+        if($subgrupo) $filtro_extras .= " AND des_sgrupo = '$subgrupo' ";
+
+        // Lógica da Empresa baseada no prefixo SY
+        if($empresa === 'syssa') {
+            $filtro_extras .= " AND cod_produto_pai LIKE 'SY%' ";
+        } elseif($empresa === 'amissima') {
+            $filtro_extras .= " AND cod_produto_pai NOT LIKE 'SY%' ";
+        }
 
         // ======= PEGAR "PAIS" (cod_produdo_pai) =======
         $pais = collect();
@@ -139,7 +146,7 @@ class RelatorioEstoqueLojasController extends Controller
                     FROM (
                         SELECT cod_produto_pai
                         FROM VW_SALDO_ESTOQUE
-                        WHERE 1=1 {$filtro_grupos}
+                        WHERE 1=1 {$filtro_extras}
                         GROUP BY cod_produto_pai
                         HAVING SUM(COALESCE(vquantidade,0)) > 0
                     ) t
@@ -155,7 +162,7 @@ class RelatorioEstoqueLojasController extends Controller
                         FROM (
                             SELECT cod_produto_pai
                             FROM VW_SALDO_ESTOQUE
-                            WHERE 1=1 {$filtro_grupos}
+                            WHERE 1=1 {$filtro_extras}
                             GROUP BY cod_produto_pai
                             HAVING SUM(COALESCE(vquantidade,0)) > 0
                         ) p
@@ -188,7 +195,7 @@ class RelatorioEstoqueLojasController extends Controller
                         FROM (
                             SELECT cod_produto_pai
                             FROM VW_SALDO_GERAL
-                            WHERE {$colSaldo} > 0 {$filtro_grupos}
+                            WHERE {$colSaldo} > 0 {$filtro_extras}
                             GROUP BY cod_produto_pai
                         ) t
                     ";
@@ -203,7 +210,7 @@ class RelatorioEstoqueLojasController extends Controller
                             FROM (
                                 SELECT cod_produto_pai
                                 FROM VW_SALDO_GERAL
-                                WHERE {$colSaldo} > 0 {$filtro_grupos}
+                                WHERE {$colSaldo} > 0 {$filtro_extras}
                                 GROUP BY cod_produto_pai
                             ) p
                         ) x
@@ -230,7 +237,7 @@ class RelatorioEstoqueLojasController extends Controller
             if ($local === 0) {
                 $pais = DB::table('VW_SALDO_ESTOQUE')
                     ->select('cod_produto_pai', 'des1_produto')
-                    ->whereRaw("1=1 {$filtro_grupos}")
+                    ->whereRaw("1=1 {$filtro_extras}")
                     ->groupBy('cod_produto_pai')
                     ->havingRaw('SUM(COALESCE(vquantidade,0)) > 0')
                     ->orderBy('cod_produto_pai', 'DESC')
@@ -242,7 +249,7 @@ class RelatorioEstoqueLojasController extends Controller
                 $pais = $colSaldo
                     ? DB::table('VW_SALDO_GERAL')
                         ->select('cod_produto_pai')
-                        ->whereRaw("{$colSaldo} > 0 {$filtro_grupos}")
+                        ->whereRaw("{$colSaldo} > 0 {$filtro_extras}")
                         ->groupBy('cod_produto_pai')
                         ->orderBy('cod_produto_pai', 'DESC')
                         ->pluck('cod_produto_pai')

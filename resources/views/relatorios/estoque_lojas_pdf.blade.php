@@ -68,6 +68,7 @@
             </div>
 
             <div class="row">
+                @if(!$modoGrade)
                 {{-- Coluna da Imagem --}}
                 <div class="col col-img">
                     <div class="imgbox">
@@ -78,9 +79,10 @@
                         @endif
                     </div>
                 </div>
+                @endif
 
                 {{-- Coluna dos Dados --}}
-                <div class="col">
+                <div class="col" style="{{ $modoGrade ? 'width: 100%' : '' }}">
                     <div class="precos">
                         <strong>Varejo:</strong> R$ {{ number_format((float)($p->preco_01 ?? 0), 2, ',', '.') }}
                         &nbsp;&nbsp;|&nbsp;&nbsp;
