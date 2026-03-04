@@ -388,11 +388,12 @@
         });
 
         document.getElementById('loader-overlay').style.display = 'flex';
-        window.location.href = `${baseUrl}?${params.toString()}`;
+        const pdfUrl = `${baseUrl}?${params.toString()}`;
+        window.open(pdfUrl, '_blank');
         
         setTimeout(() => {
             document.getElementById('loader-overlay').style.display = 'none';
-        }, 5000);
+        }, 1000);
     }
 
     document.addEventListener('DOMContentLoaded', function() {
