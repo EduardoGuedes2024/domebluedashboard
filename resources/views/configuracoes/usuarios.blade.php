@@ -40,6 +40,7 @@
                     <th class="p-4 border-b text-center">Vendas Atacado</th>
                     <th class="p-4 border-b text-center">Vendas Ecommerce</th>
                     <th class="p-4 border-b text-center">Vendas Curitiba</th>
+                    <th class="p-4 border-b text-center">Vendas Showroom</th>
                     <th class="p-4 border-b text-center">consulta Prod</th>
                     <th class="p-4 border-b text-center">Relatorio Lojas</th>
                     <th class="p-4 border-b text-center">Movimento</th>
@@ -101,6 +102,10 @@
 
                         <td class="p-4 text-center">
                             <input type="checkbox" name="vendas_curitiba" value="1" {{ (int)$user->vendas_curitiba === 1 ? 'checked' : '' }} class="w-4 h-4 text-orange-500">
+                        </td>
+
+                        <td class="p-4 text-center">
+                            <input type="checkbox" name="vendas_curitiba" value="1" {{ (int)$user->vendas_showroom === 1 ? 'checked' : '' }} class="w-4 h-4 text-orange-500">
                         </td>
 
 

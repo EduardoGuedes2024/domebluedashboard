@@ -32,6 +32,7 @@ class UserController extends Controller
             'vendas_atacado' => $request->has('vendas_atacado') ? 1 : 0,
             'vendas_ecommerce' => $request->has('vendas_ecommerce') ? 1 : 0,
             'vendas_curitiba' => $request->has('vendas_curitiba') ? 1 : 0,
+            'vendas_showroom' => $request->has('vendas_showroom') ? 1 : 0,
 
             //permissões estoque
             'domeblue_estoque' => $request->has('domeblue_estoque') ? 1 : 0,

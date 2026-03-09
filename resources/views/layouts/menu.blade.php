@@ -41,6 +41,7 @@
                 $podeVendas_Atacado = $isAdmin || (int) ($user->vendas_atacado ?? 0) === 1;
                 $podeVendas_Ecomm = $isAdmin || (int) ($user->vendas_ecommerce ?? 0) === 1;
                 $podeVendas_Curitiba = $isAdmin || (int) ($user->vendas_curitiba ?? 0) === 1;
+                $podeVendas_Showroom = $isAdmin || (int) ($user->vendas_showroom ?? 0) === 1;
 
                 ///--- GRUPOS ESTOQUE ---\\\
                 $podeEstoque = $isAdmin || (int) ($user->domeblue_estoque ?? 0) === 1;
@@ -152,7 +153,7 @@
                     </a>
 
 
-                    {{--- Vendas Curitica--}}
+                    {{--- Vendas Curitiba--}}
                     <a href="{{ $podeVendas_Curitiba ? route('vendas_Curitiba') : '#'}}"
                         class="{{ $base }} {{ $podeVendas_Curitiba ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
                         @unless ($podeVendas_Curitiba)
@@ -160,6 +161,16 @@
                         @endunless
                     >
                         <i class="fas fa-cash-register mr-3"></i>Vendas Curitiba
+                    </a>
+
+                    {{--- Vendas Showroom--}}
+                    <a href="{{ $podeVendas_Showroom ? route('vendas_Showroom') : '#'}}"
+                        class="{{ $base }} {{ $podeVendas_Showroom ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
+                        @unless ($podeVendas_Showroom)
+                            onclick="return semPermissao(event)"
+                        @endunless
+                    >
+                        <i class="fas fa-cash-register mr-3"></i>Vendas Showroom
                     </a>
                 
                 </div>

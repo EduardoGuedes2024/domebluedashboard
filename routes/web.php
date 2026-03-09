@@ -19,6 +19,7 @@ use App\http\Controllers\RelatorioVendasCuritibaController;
 use App\Http\Controllers\EcommerceUfController;
 use App\Http\Controllers\ClientesAtivosController;
 use App\Http\Controllers\giroEstoqueController;
+use App\Http\Controllers\RelatorioVendasShowroomController;
 use Symfony\Component\Routing\Route as RoutingRoute;
 
 Route::get('/', function () {
@@ -91,7 +92,12 @@ Route::get('/vendas_Ecommerce', [RelatorioVendasEcommerceController::class, 'ind
 //// vendas Curitiba
 Route::get('/vendas_Curitiba', [RelatorioVendasCuritibaController::class, 'index'])
     ->middleware('auth', 'perm:vendas_curitiba')
-    ->name('vendas_Curitiba'); 
+    ->name('vendas_Curitiba');
+
+//// vendas Showroom
+Route::get('/vendas_Showroom', [RelatorioVendasShowroomController::class, 'index'])
+    ->middleware('auth', 'perm:vendas_showroom')
+    ->name('vendas_Showroom'); 
     
     
 ///////// ------- ESTOQUE -------- \\\\\\\\\\
