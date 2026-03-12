@@ -38,6 +38,7 @@ class UserController extends Controller
             'domeblue_estoque' => $request->has('domeblue_estoque') ? 1 : 0,
             'relatorios_lojas' => $request->has('relatorios_lojas') ? 1 : 0,
             'movimento_estoque' => $request->has('movimento_estoque') ? 1 : 0,
+            'consulta_prod_cli' => $request->has('consulta_prod_cli') ? 1 : 0,
             'giro_estoque'     => $request->has('giro_estoque') ? 1 : 0,
 
             //permissões clientes

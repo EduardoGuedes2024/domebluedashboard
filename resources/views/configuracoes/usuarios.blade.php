@@ -44,6 +44,7 @@
                     <th class="p-4 border-b text-center">consulta Prod</th>
                     <th class="p-4 border-b text-center">Relatorio Lojas</th>
                     <th class="p-4 border-b text-center">Movimento</th>
+                    <th class="p-4 border-b text-center">Venda Prod.Cliente</th>
                     <th class="p-4 border-b text-center">Giro Estoque</th>
                     <th class="p-4 border-b text-center">Consulta Clientes</th>
                     <th class="p-4 border-b text-center">Config</th>
@@ -105,7 +106,7 @@
                         </td>
 
                         <td class="p-4 text-center">
-                            <input type="checkbox" name="vendas_curitiba" value="1" {{ (int)$user->vendas_showroom === 1 ? 'checked' : '' }} class="w-4 h-4 text-orange-500">
+                            <input type="checkbox" name="vendas_showroom" value="1" {{ (int)$user->vendas_showroom === 1 ? 'checked' : '' }} class="w-4 h-4 text-orange-500">
                         </td>
 
 
@@ -120,6 +121,10 @@
 
                         <td class="p-4 text-center">
                             <input type="checkbox" name="movimento_estoque" value="1" {{ (int)($user->movimento_estoque ?? 0) === 1 ? 'checked' : '' }} class="w-4 h-4 text-green-600">
+                        </td>
+
+                        <td class="p-4 text-center">
+                            <input type="checkbox" name="consulta_prod_cli" value="1" {{ (int)($user->consulta_prod_cli ?? 0) === 1 ? 'checked' : '' }} class="w-4 h-4 text-green-600">
                         </td>
 
                         <td class="p-4 text-center">

@@ -10,11 +10,13 @@
 
 {{-- Overlay de Carregamento --}}
 <div id="loader-overlay" style="display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 9999; align-items: center; justify-content: center; cursor: wait;">
+    
     <div class="flex flex-col items-center">
         <img src="{{ asset('imagens/loader.gif') }}" alt="Carregando..." class="w-12 h-12">
         <h3 class="text-blue-900 font-black mt-4">PROCESSANDO VENDAS SHOWROOM</h3>
         <p class="text-slate-500 text-sm">Analisando performance exclusiva no SHOWROOM...</p>
     </div>
+
 </div>
 
 {{--- TITULOS E FILTROS ---}}
@@ -43,8 +45,17 @@
                        class="border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
             </div>
 
+            {{-- Filtro por Produto --}}
+            <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Cód. Produto</label>
+                <input type="text" name="produto_pai" value="{{ request('produto_pai') }}" 
+                       placeholder="Ex: A5433"
+                       class="border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
+            
             {{--- Filtro Por marca ---}}
             <div class="w-full sm:w-48">
+                
                 <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Marca</label>
                 
                 <select name="empresa" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
@@ -207,7 +218,8 @@
 
                                         <tr class="text-slate-500 text-[10px] uppercase font-black">
                                             <th class="px-4 py-3 text-left">Variação (Cód/Desc)</th>
-                                            <th class="px-4 py-3 text-center bg-blue-50 text-blue-700 font-black w-48">Vendas Realizadas no Showroom</th>
+                                            <th class="px-4 py-3 text-center bg-blue-50 text-blue-700 font-black w-48">Quantidade</th>
+                                            <th class="px-2 py-2 text-center bg-blue-50 text-blue-700 font-black w-40">Valor</th>
                                         </tr>
 
                                     </thead>
@@ -229,6 +241,10 @@
                                                     {{ $row['qtd'] }}
                                                 </td>
 
+                                                <td class="px-4 py-3 text-center font-black bg-blue-50 text-blue-700 text-bae ">
+                                                    {{ $brl(($card['preco_a'] ?? 0)  *  ($row['qtd'])) }}
+                                                </td>
+
                                             </tr>
 
                                         @endforeach
@@ -240,6 +256,10 @@
                                             <td class="px-4 py-3">TOTAL ACUMULADO NESTE PRODUTO</td>
                                             <td class="text-center px-4 py-3 bg-blue-600 text-base">
                                                 {{ $card['total_geral'] }}
+                                            </td>
+
+                                            <td class="text-center px-4 py-3 bg-blue-600 text-base">
+                                                {{ $brl((($card['preco_a'] ?? 0) * ($row['total_geral'] ?? 0)) ) }}
                                             </td>
 
                                         </tr>

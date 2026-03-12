@@ -48,8 +48,9 @@
                 $podeEstoqueLojas = $isAdmin || (int) ($user->relatorios_lojas ?? 0) === 1;
                 $podeMovimentacao = $isAdmin || (int) ($user->movimento_estoque ?? 0) === 1;
                 $podeGiroEstoque = $isAdmin || (int) ($user->giro_estoque ?? 0) === 1;
-
-                ///--- CLIENTES ---- \\\
+                
+                ///--- GRUPO ATACADO---- \\\
+                $podeConProdCli = $isAdmin || (int) ($user->consulta_prod_cli ?? 0) === 1;
                 $podeClienteA = $isAdmin || (int) ($user->clientes_ativos ?? 0) === 1;
                 
                 $podeConfig = $isAdmin || (int) ($user->configuracoes ?? 0) === 1;
@@ -215,8 +216,10 @@
                             onclick="return semPermissao(event)"
                         @endunless
                     >
-                        <i class="fas fa-box mr-3"></i> Movimentação Estoque
+                        <i class="fas fa-box mr-3"></i> Movimentação do Produto
                     </a>
+
+                    
                     
                     {{----Giro Estoque---}}
                     <a href="{{ $podeGiroEstoque ? route('giroEstoque') : '#'}}"
@@ -232,20 +235,44 @@
             </li>
 
 
-            {{-- CLIENTES ATIVOS --}}
-            <li>
-                <a href="{{ $podeClienteA ? route('clientes_Ativos') : '#' }}"
-                class="{{ $base }} {{ $podeClienteA ? 'hover:bg-blue-700 text-gray-300' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
-                @unless ($podeClienteA)
-                    onclick="return semPermissao(event)"
-                @endunless
-                >
-                    <i class="fa-solid fa-users mr-3"></i> Consulta Clientes
-                </a>
+            {{-- GRUPO ATACADO --}}
+            <li class="mt-2">
+
+                <button type="button" onclick="toggleMenu('sub-atacado')" 
+                    class="w-full flex justify-between items-center text-xs font-bold text-white  uppercase px-3 mt-4 mb-2 hover:text-blue-500 transition focus:outline-none">
+                    <span>ATACADO</span>
+                    <i class="fas fa-chevron-down text-[13px] ml-2"></i>
+                </button>
+
+                <div id="sub-atacado" class="hidden flex flex-col transition-all duration-300">
+
+                    {{--- Consulta Produto / Cliente--}}
+                    <a href="{{ $podeConProdCli ? route('consulta_prodCli') : '#'}}"
+                        class="{{ $base }} {{ $podeConProdCli ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
+                        @unless ($podeConProdCli)
+                            onclick="return semPermissao(event)"
+                        @endunless
+                    >
+                        <i class="fas fa-box mr-3"></i>Venda Prod. por Cliente
+                    </a>
+
+                    {{-- CLIENTES ATIVOS --}}
+                    <a href="{{ $podeClienteA ? route('clientes_Ativos') : '#' }}"
+                    class="{{ $base }} {{ $podeClienteA ? 'hover:bg-blue-700 text-gray-300 pl-10' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
+                    @unless ($podeClienteA)
+                        onclick="return semPermissao(event)"
+                    @endunless
+                    >
+                        <i class="fa-solid fa-users mr-3"></i> Consulta Clientes
+                    </a>
+                    
+                </div>
+
             </li>
 
-            {{-- CONFIGURAÇÕES --}}
             <li>
+                {{-- CONFIGURAÇÕES --}}
+                
                 <a href="{{ $podeConfig ? route('users.index') : '#' }}"
                 class="{{ $base }} {{ $podeConfig ? 'hover:bg-blue-700 text-gray-300' : 'opacity-50 cursor-not-allowed text-gray-400'}}"
                 @unless ($podeConfig)

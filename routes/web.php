@@ -20,6 +20,7 @@ use App\Http\Controllers\EcommerceUfController;
 use App\Http\Controllers\ClientesAtivosController;
 use App\Http\Controllers\giroEstoqueController;
 use App\Http\Controllers\RelatorioVendasShowroomController;
+use App\Http\Controllers\consultaProdCliController;
 use Symfony\Component\Routing\Route as RoutingRoute;
 
 Route::get('/', function () {
@@ -128,6 +129,12 @@ Route::get('/movimentacao_estoque', [MovimentacaoEstoqueController::class, 'inde
 //PDF Movimento estoque
 Route::get('/movimentacao_estoque/export/pdf', [MovimentacaoEstoqueController::class, 'exportPdf'])
     ->name('movimentacao.pdf');
+
+// consulta venda produto por cliente    
+Route::get('/consulta_prodCli', [consultaProdCliController::class, 'index'])
+    ->middleware(['auth', 'perm:consulta_prod_cli'])
+    ->name('consulta_prodCli');
+
 
 // Giro Estoque
 route::get('/giroEstoque', [giroEstoqueController::class,'index'])

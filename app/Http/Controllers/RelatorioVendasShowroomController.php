@@ -17,6 +17,7 @@ class RelatorioVendasShowroomController extends Controller
         $inicio = $request->get('data_inicio');
         $fim = $request->get('data_fim');
         $empresa = $request->get('empresa');
+        $produtoPai = trim($request->get('produto_pai'));
         $lojaAlvo = 'SHOWROOM'; // LOJA TRAVADA AQUI
 
         $perPage = 30;
@@ -25,6 +26,7 @@ class RelatorioVendasShowroomController extends Controller
         $end = $page * $perPage;
 
         $filtroEmpresa = $empresa ? "AND empresa ='{$empresa}'" : "";
+        $filtroProduto = $produtoPai ? "AND produto_pai = '{$produtoPai}'" : "";
 
         // 1. Total de produtos que venderam NESTA LOJA
         $sqlTotal = "
@@ -35,6 +37,7 @@ class RelatorioVendasShowroomController extends Controller
                 WHERE data_venda BETWEEN '{$inicio} 00:00:00' AND '{$fim} 23:59:59'
                 AND origem = '{$lojaAlvo}'
                 {$filtroEmpresa}
+                {$filtroProduto}
                 GROUP BY produto_pai
             ) t
         ";
@@ -95,6 +98,7 @@ class RelatorioVendasShowroomController extends Controller
                 WHERE data_venda BETWEEN '{$inicio} 00:00:00' AND '{$fim} 23:59:59'
                 AND origem = '{$lojaAlvo}'
                 {$filtroEmpresa}
+                {$filtroProduto}
                 GROUP BY produto_pai
             ) x
             WHERE x.rn BETWEEN ? AND ?
