@@ -49,7 +49,7 @@
             <div>
                 <label class="block text-[10px] font-black text-slate-400 uppercase mb-1">Cód. Produto</label>
                 <input type="text" name="produto_pai" value="{{ request('produto_pai') }}" 
-                       placeholder="Ex: A5433"
+                       placeholder="Ex: A5201 ou SY0001"
                        class="border rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
             </div>
             
