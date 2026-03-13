@@ -219,7 +219,7 @@
                                         <tr class="text-slate-500 text-[10px] uppercase font-black">
                                             <th class="px-4 py-3 text-left">Variação (Cód/Desc)</th>
                                             <th class="px-4 py-3 text-center bg-blue-50 text-blue-700 font-black w-48">Quantidade</th>
-                                            <th class="px-2 py-2 text-center bg-blue-50 text-blue-700 font-black w-40">Valor</th>
+                                            <th class="px-2 py-2 text-center bg-blue-50 text-blue-700 font-black w-40">R$ Valor</th>
                                         </tr>
 
                                     </thead>
@@ -237,7 +237,7 @@
                                                     </span>
                                                 </td>
 
-                                                <td class="px-4 py-3 text-center font-black bg-blue-50 text-blue-700 text-base">
+                                                <td class="px-4 py-3 text-center font-black bg-gray-50 text-blue-700 text-base">
                                                     {{ $row['qtd'] }}
                                                 </td>
 
@@ -254,12 +254,12 @@
 
                                         <tr>
                                             <td class="px-4 py-3">TOTAL ACUMULADO NESTE PRODUTO</td>
-                                            <td class="text-center px-4 py-3 bg-blue-600 text-base">
+                                            <td class="text-center px-4 py-3  text-base">
                                                 {{ $card['total_geral'] }}
                                             </td>
 
                                             <td class="text-center px-4 py-3 bg-blue-600 text-base">
-                                                {{ $brl((($card['preco_a'] ?? 0) * ($row['total_geral'] ?? 0)) ) }}
+                                                {{ $brl((($card['preco_a'] ?? 0) * ($card['total_geral'] ?? 0)) ) }}
                                             </td>
 
                                         </tr>

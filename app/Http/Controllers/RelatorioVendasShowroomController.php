@@ -59,32 +59,57 @@ class RelatorioVendasShowroomController extends Controller
             $colunaFaturamento = "ISNULL(showroom, 0) + ISNULL(showroom_syssa, 0)";
         }
 
-        //Cálculo do Faturamento Total (DASH_VENDAS)
-        $sqlFaturamento = "
-            SELECT 
-                SUM($colunaFaturamento) as faturamento_total
-            FROM dash_vendas 
-            WHERE data_movimento BETWEEN '{$inicio} 00:00:00' AND '{$fim} 23:59:59'
-        ";
-        $faturamento = DB::selectOne($sqlFaturamento);
+        if ($produtoPai) {
+            // Se tem produto filtrado, calculamos o faturamento e peças direto da VW_VENDAS_TODOS
+            // para que os cards lá no topo mostrem APENAS os dados desse produto.
+            $sqlResumoFiltrado = "
+                SELECT 
+                    SUM(quantidade) as total_pecas,
+                    SUM(quantidade * preco_venda) as faturamento_total
+                FROM VW_VENDAS_TODOS 
+                WHERE data_venda BETWEEN '{$inicio} 00:00:00' AND '{$fim} 23:59:59'
+                AND origem = '{$lojaAlvo}'
+                {$filtroEmpresa}
+                {$filtroProduto}
+            ";
+            $resumoDados = DB::selectOne($sqlResumoFiltrado);
+            
+            $resumo = (object)[
+                'faturamento_total' => $resumoDados->faturamento_total ?? 0,
+                'total_pecas' => $resumoDados->total_pecas ?? 0
+            ];
+        } else {
+
+            //Cálculo do Faturamento Total (DASH_VENDAS)
+            $sqlFaturamento = "
+                SELECT 
+                    SUM($colunaFaturamento) as faturamento_total
+                FROM dash_vendas 
+                WHERE data_movimento BETWEEN '{$inicio} 00:00:00' AND '{$fim} 23:59:59'
+            ";
+            $faturamento = DB::selectOne($sqlFaturamento);
 
 
-        //Soma do Total de Peças (VW_VENDAS_TODOS)
-        $sqlPecas = "
-            SELECT 
-                SUM(quantidade) as total_pecas
-            FROM VW_VENDAS_TODOS 
-            WHERE data_venda BETWEEN '{$inicio} 00:00:00' AND '{$fim} 23:59:59'
-            AND origem = '{$lojaAlvo}'
-            {$filtroEmpresa}
-        ";
-        $pecas = DB::selectOne($sqlPecas);
+            //Soma do Total de Peças (VW_VENDAS_TODOS)
+            $sqlPecas = "
+                SELECT 
+                    SUM(quantidade) as total_pecas
+                FROM VW_VENDAS_TODOS 
+                WHERE data_venda BETWEEN '{$inicio} 00:00:00' AND '{$fim} 23:59:59'
+                AND origem = '{$lojaAlvo}'
+                {$filtroEmpresa}
+            ";
+            $pecas = DB::selectOne($sqlPecas);
 
-        // Montamos o objeto resumo para o Blade não dar erro
-        $resumo = (object)[
-            'faturamento_total' => $faturamento->faturamento_total ?? 0,
-            'total_pecas' => $pecas->total_pecas ?? 0
-        ];
+
+
+
+            // Montamos o objeto resumo para o Blade não dar erro
+            $resumo = (object)[
+                'faturamento_total' => $faturamento->faturamento_total ?? 0,
+                'total_pecas' => $pecas->total_pecas ?? 0
+            ];
+        }
 
         // 2. Ranking de vendas exclusivo da loja alvo
         $sqlRanking = "
